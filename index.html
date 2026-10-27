@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08010a">
+<title>100 причин, почему именно ты</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{
+  --bg:#07010a; --ruby:#c2263f; --gold:#e8c27a; --cream:#f3e3cf; --ink:#d8c0ae;
+  --glass:rgba(26,5,15,.66); --line:rgba(232,194,122,.24);
+  --serif:"Cormorant Garamond","Playfair Display",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--cream);font-family:var(--sans);overflow:hidden;overscroll-behavior:none}
+#bg{position:fixed;inset:0;background:
+  radial-gradient(ellipse at 50% 40%,#3d0c20 0%,#1f0613 36%,#0a0109 72%,#050006 100%)}
+#stage{position:fixed;inset:0;z-index:1}
+#c{display:block;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab;outline:none}
+#c:active{cursor:grabbing}
+
+.off{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .55s ease,visibility 0s linear .55s}
+.on,.overlay,#hud,#controls,#panel,#final,#drawer,#hint{transition:opacity .55s ease,visibility 0s}
+
+button{font-family:inherit}
+.btn{font:500 14px/1 var(--sans);letter-spacing:.04em;color:var(--cream);background:rgba(58,10,28,.58);
+  border:1px solid var(--line);border-radius:999px;padding:13px 20px;cursor:pointer;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .3s,border-color .3s,transform .2s}
+.btn:hover{background:rgba(110,18,44,.62);border-color:rgba(232,194,122,.5)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,#7d1230,#ae2244);border-color:rgba(232,194,122,.55);color:#fff3e2;box-shadow:0 0 38px rgba(194,38,63,.32)}
+.btn:focus-visible,.icon:focus-visible,.x:focus-visible,.row:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--cream);background:rgba(40,6,20,.55);
+  border:1px solid var(--line);cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:0}
+.icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.icon[aria-pressed="false"]{opacity:.55}
+.x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(40,6,20,.5);color:var(--cream);font-size:20px;line-height:1;cursor:pointer;padding:0}
+
+.overlay{position:fixed;inset:0}
+#loader{z-index:60;display:grid;place-items:center;background:#07010a;transition:opacity .8s ease,visibility 0s linear .8s}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.loadbox{text-align:center;padding:24px;max-width:420px}
+.loadbox p{font-family:var(--serif);font-size:22px;color:var(--ink);margin:18px 0 20px;line-height:1.35}
+.spinner{width:34px;height:34px;margin:0 auto;border-radius:50%;border:2px solid rgba(232,194,122,.2);border-top-color:var(--gold);animation:spin 1.1s linear infinite}
+.loadbox.err .spinner{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#intro{z-index:20;display:flex;align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--safe-t) + 24px) 22px calc(var(--safe-b) + 24px);
+  background:radial-gradient(ellipse at 50% 55%,rgba(8,1,10,.0) 0%,rgba(8,1,10,.55) 70%)}
+.intro-inner{max-width:640px;text-align:center;margin:auto}
+.kicker{font:500 11px/1 var(--sans);letter-spacing:.36em;text-transform:uppercase;color:var(--gold);opacity:.8;margin-bottom:22px}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(38px,9vw,78px);line-height:1.02;margin:0 0 20px;color:#fbead3;
+  text-shadow:0 0 40px rgba(194,38,63,.45)}
+.sub{font-family:var(--serif);font-style:italic;font-size:clamp(19px,4.6vw,26px);line-height:1.4;color:var(--ink);margin:0 auto 34px;max-width:30ch}
+.saved{font-size:13px;color:var(--gold);opacity:.85;margin:-10px 0 24px;letter-spacing:.03em}
+
+#hud{position:fixed;z-index:10;top:0;left:0;right:0;padding:calc(var(--safe-t) + 12px) 14px 0;pointer-events:none}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.progress{flex:1;min-width:0;max-width:340px;pointer-events:none;text-shadow:0 1px 12px rgba(0,0,0,.7)}
+#ptext{font:500 13px/1.2 var(--sans);letter-spacing:.05em;color:var(--cream)}
+.bar{height:2px;margin-top:9px;background:rgba(232,194,122,.16);border-radius:2px;overflow:hidden}
+#pbar{display:block;height:100%;width:0;background:linear-gradient(90deg,#b02244,#e8c27a);box-shadow:0 0 10px rgba(232,194,122,.7);transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.tools{display:flex;gap:8px;pointer-events:auto}
+
+#controls{position:fixed;z-index:10;left:0;right:0;bottom:calc(var(--safe-b) + 16px);display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:0 12px}
+#hint{position:fixed;z-index:9;left:50%;bottom:calc(var(--safe-b) + 76px);transform:translateX(-50%);width:min(92vw,460px);text-align:center;
+  font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.35;color:var(--ink);padding:12px 18px;border-radius:16px;
+  background:rgba(22,4,13,.5);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);pointer-events:none}
+
+#toast{position:fixed;z-index:25;left:50%;top:calc(var(--safe-t) + 74px);transform:translate(-50%,-10px);width:min(92vw,480px);text-align:center;pointer-events:none;
+  opacity:0;visibility:hidden;transition:opacity .8s ease,transform .8s ease,visibility 0s linear .8s;
+  padding:16px 20px;border-radius:18px;background:linear-gradient(160deg,rgba(80,12,34,.78),rgba(24,4,14,.78));border:1px solid rgba(232,194,122,.4);
+  box-shadow:0 0 50px rgba(194,38,63,.28);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .8s ease,transform .8s ease,visibility 0s}
+#toast .t1{font-family:var(--serif);font-size:21px;line-height:1.3;color:#fff0dc}
+#toast .t2{margin-top:8px;font-size:13px;color:var(--gold);letter-spacing:.03em}
+
+#panel{position:fixed;z-index:30;left:0;right:0;bottom:calc(var(--safe-b) + 12px);margin:0 auto;width:min(calc(100vw - 24px),560px);max-height:62vh;overflow-y:auto;
+  padding:22px 22px 20px;border-radius:24px;background:linear-gradient(165deg,rgba(60,9,28,.8),rgba(20,3,12,.82));
+  border:1px solid rgba(232,194,122,.34);box-shadow:0 20px 80px rgba(0,0,0,.6),0 0 60px rgba(194,38,63,.2);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transform:translateY(0)}
+#panel.off{transform:translateY(24px);transition:opacity .45s ease,transform .45s ease,visibility 0s linear .45s}
+#panel.on{transition:opacity .6s ease,transform .6s ease,visibility 0s}
+#pClose{position:absolute;top:12px;right:12px}
+.p-meta{display:flex;flex-direction:column;gap:5px;padding-right:44px}
+#pNum{font:500 11px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+#pChap{font:400 12px/1.3 var(--sans);color:rgba(216,192,174,.7)}
+.p-photo{margin:14px 0 0;border-radius:16px;overflow:hidden;border:1px solid var(--line);max-height:30vh}
+.p-photo img{display:block;width:100%;height:auto;max-height:30vh;object-fit:cover}
+.orn{height:1px;margin:16px 0 14px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.55}
+#pTitle{font-family:var(--serif);font-weight:500;font-size:clamp(26px,6vw,34px);line-height:1.12;margin:0 0 10px;color:#fff0dc}
+#pText{font-family:var(--serif);font-size:clamp(19px,4.6vw,22px);line-height:1.42;margin:0 0 20px;color:var(--ink)}
+.p-actions{display:flex;gap:10px;flex-wrap:wrap}
+.p-actions .btn{flex:1 1 auto;white-space:nowrap}
+
+#final{position:fixed;inset:0;z-index:35;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;padding:calc(var(--safe-t) + 30px) 22px calc(var(--safe-b) + 30px);
+  background:radial-gradient(ellipse at 50% 50%,rgba(10,1,10,.5),rgba(6,0,8,.86))}
+.fin-inner{margin:auto;max-width:620px;text-align:center}
+.fin-text p{opacity:0;transform:translateY(12px);animation:rise 1.4s ease forwards;font-family:var(--serif);font-size:clamp(19px,4.8vw,24px);line-height:1.5;color:var(--ink);margin:0 0 18px}
+.fin-text p.big{font-size:clamp(30px,8vw,46px);color:#fff0dc;margin-bottom:24px;text-shadow:0 0 30px rgba(194,38,63,.5)}
+.sign{opacity:0;animation:rise 1.8s ease forwards;font-family:var(--serif);font-style:italic;font-size:clamp(26px,7vw,40px);color:var(--gold);margin:28px 0 30px;text-shadow:0 0 30px rgba(232,194,122,.4)}
+.fin-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;opacity:0;animation:rise 1.4s ease forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+
+#skip{position:fixed;z-index:12;right:14px;bottom:calc(var(--safe-b) + 16px)}
+
+#drawer{position:fixed;inset:0;z-index:40;background:rgba(6,0,8,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;justify-content:center;align-items:flex-end}
+.sheet{width:min(100vw,620px);max-height:86vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:linear-gradient(170deg,#2a0817,#12030b);
+  border:1px solid var(--line);border-radius:24px 24px 0 0;padding:20px 18px calc(var(--safe-b) + 22px)}
+.sheet-head{display:flex;justify-content:space-between;align-items:center}
+.sheet h3{font-family:var(--serif);font-weight:500;font-size:28px;margin:0}
+.muted{color:rgba(216,192,174,.7);font-size:13px;margin:6px 0 14px}
+.chap{font:500 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:22px 0 8px}
+.row{display:flex;gap:12px;align-items:baseline;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid rgba(232,194,122,.09);color:var(--cream);padding:11px 4px;font-family:var(--serif);font-size:19px;cursor:pointer}
+.row .n{font:500 12px/1 var(--sans);color:var(--gold);min-width:26px}
+.row.lock{color:rgba(216,192,174,.35);cursor:default}
+.row.lock .n{color:rgba(232,194,122,.35)}
+
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(5,0,7,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.card{width:min(92vw,420px);border-radius:22px;background:linear-gradient(165deg,#2e0a1a,#14030c);border:1px solid rgba(232,194,122,.35);padding:24px 22px;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.card h3{font-family:var(--serif);font-weight:500;font-size:28px;margin:0 0 10px}
+.card p{font-family:var(--serif);font-size:19px;line-height:1.4;color:var(--ink);margin:0 0 20px}
+.card .row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.card img{display:block;width:100%;height:auto;border-radius:12px;margin:0 0 14px;border:1px solid var(--line)}
+.card a.btn{display:inline-block;text-decoration:none}
+.card .small{font:400 13px/1.4 var(--sans);color:rgba(216,192,174,.75);margin:0 0 16px}
+
+@media (min-width:760px){
+  #panel{left:auto;right:36px;margin:0;bottom:36px;width:440px}
+  #controls{bottom:26px}
+  #hud{padding:calc(var(--safe-t) + 18px) 28px 0}
+}
+@media (max-width:380px){ .btn{padding:12px 14px;font-size:13px} }
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01s!important;animation-delay:0s!important;transition-duration:.01s!important}
+}
+
+/* ===== премиум-слой ===== */
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes ang{to{--ang:360deg}}
+@keyframes wr{to{opacity:1;filter:blur(0);transform:none}}
+@keyframes chIn{to{opacity:1;filter:blur(0);transform:none}}
+@keyframes shine{0%,62%{left:-60%}100%{left:140%}}
+.btn{position:relative;overflow:hidden}
+.btn.primary::after{content:"";position:absolute;top:0;left:-60%;width:36%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,236,205,.38),transparent);transform:skewX(-20deg);animation:shine 5s ease-in-out infinite;pointer-events:none}
+.btn.primary{box-shadow:0 0 38px rgba(194,38,63,.34),inset 0 1px 0 rgba(255,225,190,.28)}
+.wd{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;opacity:0;filter:blur(14px);transform:translateY(.45em) scale(1.1);animation:chIn 1.4s cubic-bezier(.2,.7,.2,1) forwards}
+.w{display:inline-block;opacity:0;filter:blur(6px);transform:translateY(7px);animation:wr .8s cubic-bezier(.2,.7,.2,1) forwards;white-space:pre-wrap}
+h1{text-shadow:0 0 28px rgba(194,38,63,.55),0 0 80px rgba(232,194,122,.18)}
+#panel{border:1px solid transparent;background:linear-gradient(165deg,rgba(60,9,28,.84),rgba(18,3,11,.88)) padding-box,conic-gradient(from var(--ang),rgba(232,194,122,.22) 0,rgba(232,194,122,.22) 52%,#ffdca6 78%,rgba(232,194,122,.22) 100%) border-box;animation:ang 7s linear infinite;
+  box-shadow:0 24px 90px rgba(0,0,0,.65),0 0 70px rgba(194,38,63,.22),inset 0 1px 0 rgba(255,225,190,.12)}
+.progress{display:flex;align-items:center;gap:12px}
+.progress .pt{flex:1;min-width:0}
+#ring{width:58px;height:58px;flex:none;filter:drop-shadow(0 0 8px rgba(194,38,63,.5))}
+#ring line{stroke:rgba(232,194,122,.2);stroke-width:1;stroke-linecap:round;transition:stroke .8s,filter .8s}
+#ring line.lit{stroke:#f6d08a;filter:drop-shadow(0 0 2px rgba(255,200,120,.95))}
+#rnum{font:500 15px var(--serif);fill:#fff0dc;font-variant-numeric:tabular-nums}
+#telem{position:fixed;z-index:9;left:16px;bottom:calc(var(--safe-b) + 24px);display:none;gap:22px;font:400 11px/1.2 var(--sans);letter-spacing:.06em;color:rgba(216,192,174,.7);font-variant-numeric:tabular-nums;pointer-events:none;text-shadow:0 1px 8px #000}
+#telem b{display:block;margin-top:3px;font:500 17px/1 var(--serif);letter-spacing:0;color:var(--cream)}
+#reticle{position:fixed;z-index:8;left:0;top:0;width:80px;height:80px;margin:-40px 0 0 -40px;pointer-events:none;opacity:0;transition:opacity .25s;will-change:transform}
+#reticle.on{opacity:1}
+#reticle svg{width:100%;height:100%;fill:none;stroke:var(--gold);stroke-width:1;filter:drop-shadow(0 0 4px rgba(232,194,122,.8))}
+#reticle .r1{stroke-dasharray:3 6;transform-origin:40px 40px;animation:spin 10s linear infinite}
+#reticle .r2{stroke-opacity:.5}
+#rlab{position:absolute;left:50%;top:86px;transform:translateX(-50%);white-space:nowrap;font:italic 400 16px/1 var(--serif);color:#fff0dc;padding:7px 12px;background:rgba(22,4,13,.58);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+@media (min-width:760px){#telem{display:flex}}
+
+/* ===== темы, модалки, новые элементы ===== */
+:root{--g1:rgba(60,9,28,.84);--g2:rgba(18,3,11,.88);--b1:rgba(58,10,28,.58);--b2:#7d1230;--b3:#ae2244}
+html[data-theme=dawn]{--gold:#ffd9a0;--line:rgba(255,214,170,.36);--g1:rgba(122,50,54,.84);--g2:rgba(50,15,30,.9);--b1:rgba(96,34,40,.6);--b2:#b0453c;--b3:#e07a52}
+html[data-theme=night]{--gold:#bcd4ff;--line:rgba(170,200,255,.32);--g1:rgba(16,32,72,.84);--g2:rgba(4,8,22,.92);--b1:rgba(16,30,66,.6);--b2:#2a58b8;--b3:#4f86e8}
+.btn{background:var(--b1)}
+.btn.primary{background:linear-gradient(135deg,var(--b2),var(--b3))}
+#panel{background:linear-gradient(165deg,var(--g1),var(--g2)) padding-box,conic-gradient(from var(--ang),rgba(232,194,122,.22) 0,rgba(232,194,122,.22) 52%,#ffdca6 78%,rgba(232,194,122,.22) 100%) border-box}
+.sheet,.card{background:linear-gradient(165deg,var(--g1),var(--g2))}
+#fx2d{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.btn.sm{padding:9px 14px;font-size:13px}
+.btn.sm[aria-pressed="true"]{background:rgba(194,38,63,.55);border-color:var(--gold)}
+.how{margin-top:16px}
+.p-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.tc{opacity:0;transition:opacity .25s}.tc.on{opacity:1}
+.wd2{display:inline-block;white-space:nowrap}
+.tc.cur::after{content:"";display:inline-block;width:2px;height:1em;margin-left:1px;background:var(--gold);vertical-align:-.12em;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.chips{display:flex;gap:8px;margin:0 0 6px}
+.chip{font:500 13px var(--sans);color:var(--ink);background:none;border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.chip.on{color:#fff0dc;background:rgba(194,38,63,.4);border-color:var(--gold)}
+.card.wide{width:min(94vw,460px);max-height:86vh;overflow-y:auto;text-align:left;-webkit-overflow-scrolling:touch}
+.card.wide .sheet-head{margin-bottom:6px}
+.grp{font:500 12px/1 var(--sans);letter-spacing:.14em;color:var(--gold);margin:18px 0 10px}
+.themes{display:flex;gap:8px}
+.th{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;font:500 14px var(--sans);color:var(--cream);background:var(--b1);border:1px solid var(--line);border-radius:14px;padding:12px 6px;cursor:pointer}
+.th i{width:12px;height:12px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.th.on{border-color:var(--gold);box-shadow:0 0 22px rgba(232,194,122,.25)}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1px solid rgba(232,194,122,.1);font:400 19px var(--serif)}
+.sw input{appearance:none;-webkit-appearance:none;width:46px;height:26px;border-radius:99px;background:rgba(255,255,255,.14);position:relative;cursor:pointer;transition:background .3s;flex:none}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff0dc;transition:transform .3s}
+.sw input:checked{background:var(--b3)}.sw input:checked::after{transform:translateX(20px)}
+.mbtns{display:grid;gap:10px}
+.card input[type=text],.card input:not([type]),.card textarea{width:100%;margin:0 0 10px;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.28);color:var(--cream);font:400 19px/1.35 var(--serif);resize:none;outline:none}
+.card input:focus,.card textarea:focus{border-color:var(--gold)}
+.card .small{margin:0 0 12px}
+.guide{text-align:center}
+.gbody{min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gbody.in{animation:gin .6s cubic-bezier(.2,.7,.2,1)}
+@keyframes gin{from{opacity:0;transform:translateY(10px)}}
+.glyph{font:400 46px/1 var(--serif);color:var(--gold);text-shadow:0 0 28px var(--gold);margin-bottom:12px}
+.guide h3{margin:0 0 10px}
+.guide p{margin:0 0 14px}
+.dots{display:flex;gap:7px;justify-content:center;margin:0 0 16px}
+.dots i{width:7px;height:7px;border-radius:50%;background:rgba(232,194,122,.25);transition:all .3s}
+.dots i.on{background:var(--gold);width:20px;border-radius:4px}
+.skipl{margin-top:12px;background:none;border:0;color:rgba(216,192,174,.6);font:400 13px var(--sans);cursor:pointer;text-decoration:underline}
+
+#controls .btn{padding:12px 15px}
+#bHarp[aria-pressed="true"]{background:linear-gradient(135deg,var(--b2),var(--b3));border-color:var(--gold);box-shadow:0 0 26px rgba(232,194,122,.35)}
+#figLabel{position:fixed;z-index:9;left:50%;top:calc(var(--safe-t) + 92px);transform:translateX(-50%);font:italic 500 24px var(--serif);color:#fff0dc;text-shadow:0 0 22px var(--gold),0 0 4px #000;opacity:0;transition:opacity .4s;pointer-events:none;white-space:nowrap}
+#gCat{display:block;width:84px;height:74px;margin:0 auto 6px;fill:rgba(40,8,22,.5);stroke:var(--gold);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(232,194,122,.45))}
+#gCat .eye,#gCat .nose{fill:var(--gold);stroke:none}
+#gCat .eye{transform-box:fill-box;transform-origin:center;animation:blinkEye 4.6s infinite}
+@keyframes blinkEye{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.gbody{min-height:230px}.glyph{font-size:30px!important;margin-bottom:8px!important}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="stage"><canvas id="c" aria-label="Интерактивное созвездие из ста звёзд"></canvas></div>
+<canvas id="fx2d" aria-hidden="true"></canvas>
+
+<div id="loader" class="overlay"><div class="loadbox" id="loadbox"><div class="spinner"></div><p id="loadmsg">Зажигаем звёзды…</p><button id="reload" class="btn" hidden>Попробовать снова</button></div></div>
+
+<section id="intro" class="overlay off">
+  <div class="intro-inner">
+    <div class="kicker">Для Карины</div>
+    <h1 id="iTitle"></h1>
+    <p class="sub" id="iSub"></p>
+    <p class="saved" id="iSaved" hidden></p>
+    <button id="start" class="btn primary"></button>
+    <div class="how"><button id="bHow" class="btn sm" type="button">Спросить мини-Артёма</button></div>
+  </div>
+</section>
+
+<div id="hud" class="off">
+  <div id="telem"><span>Азимут<b id="tAz">0°</b></span><span>Высота<b id="tEl">0°</b></span><span>Масштаб<b id="tZm">1×</b></span><span>Луна<b id="tMoon">—</b></span></div>
+  <div class="topbar">
+    <div class="progress"><svg id="ring" viewBox="0 0 56 56" aria-hidden="true"><text id="rnum" x="28" y="32.5" text-anchor="middle">0</text></svg><div class="pt"><div id="ptext"></div><div class="bar"><i id="pbar"></i></div></div></div>
+    <div class="tools">
+      <button id="bSound" class="icon" aria-label="Звук" aria-pressed="true" title="Звук"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></button>
+      <button id="bList" class="icon" aria-label="Все причины" title="Все причины"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".6"/><circle cx="4" cy="12" r=".6"/><circle cx="4" cy="18" r=".6"/></svg></button>
+      <button id="bMenu" class="icon" aria-label="Меню и настройки" title="Меню и настройки"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div id="figLabel" aria-live="polite"></div>
+<div id="reticle" aria-hidden="true"><svg viewBox="0 0 80 80"><circle class="r1" cx="40" cy="40" r="30"/><circle class="r2" cx="40" cy="40" r="21"/><path d="M40 3v11M40 66v11M3 40h11M66 40h11"/></svg><span id="rlab"></span></div>
+<div id="toast" role="status" aria-live="polite"><div class="t1"></div><div class="t2" hidden></div></div>
+<div id="hint" class="off"></div>
+
+<div id="controls" class="off">
+  <button id="bHome" class="btn">Вернуть созвездие</button>
+  <button id="bZoom" class="btn">Приблизить сердце</button>
+  <button id="bFig" class="btn">Фигуры</button>
+  <button id="bHarp" class="btn" aria-pressed="false">Арфа</button>
+  <button id="bPlay" class="btn" hidden>Сыграть линии</button>
+  <button id="bFinale" class="btn primary" hidden>Финал</button>
+</div>
+
+<div id="panel" class="off" role="dialog" aria-live="polite" aria-labelledby="pTitle">
+  <button id="pClose" class="x" aria-label="Закрыть">×</button>
+  <div class="p-meta"><span id="pNum"></span><span id="pChap"></span></div>
+  <div class="p-photo" id="pPhoto" hidden><img alt=""></div>
+  <div class="orn"></div>
+  <h2 id="pTitle"></h2>
+  <p id="pText"></p>
+  <div class="p-tools"><button id="pFav" class="btn sm" type="button" aria-pressed="false">♡ В закладки</button><button id="pDel" class="btn sm" type="button" hidden>Удалить</button></div>
+  <div class="p-actions">
+    <button id="pNext" class="btn primary">Следующая звезда</button>
+    <button id="pBack" class="btn">К созвездию</button>
+  </div>
+</div>
+
+<button id="skip" class="btn off" hidden>Пропустить</button>
+
+<div id="final" class="off">
+  <div class="fin-inner">
+    <div class="fin-text" id="finText"></div>
+    <p class="sign" id="finSign"></p>
+    <div class="fin-actions" id="finActions">
+      <button id="fView" class="btn primary">Посмотреть созвездие</button>
+      <button id="fList" class="btn">Все причины</button>
+      <button id="fMine" class="btn">Добавить свою звезду</button>
+      <button id="fSave" class="btn">Сохранить картинкой</button>
+    </div>
+  </div>
+</div>
+
+<div id="drawer" class="off">
+  <div class="sheet" role="dialog" aria-label="Все причины">
+    <div class="sheet-head"><h3>Все причины</h3><button id="dClose" class="x" aria-label="Закрыть">×</button></div>
+    <p class="muted" id="dSub"></p>
+    <div class="chips"><button id="cAll" class="chip on" type="button">Все</button><button id="cFav" class="chip" type="button">♥ Закладки</button></div>
+    <div id="dList"></div>
+  </div>
+</div>
+
+<div id="mMenu" class="modal" hidden><div class="card wide" role="dialog" aria-label="Меню">
+  <div class="sheet-head"><h3>Меню</h3><button class="x" data-close aria-label="Закрыть">×</button></div>
+  <div class="grp">Небо</div>
+  <div class="themes"><button class="th" data-th="ruby" type="button"><i style="background:#c2263f"></i>Рубин</button><button class="th" data-th="dawn" type="button"><i style="background:#f0a070"></i>Рассвет</button><button class="th" data-th="night" type="button"><i style="background:#4f86e8"></i>Полночь</button></div>
+  <div class="grp">Атмосфера</div>
+  <label class="sw"><span>Светлячки</span><input type="checkbox" id="tFly"></label>
+  <label class="sw"><span>Дождь на стекле</span><input type="checkbox" id="tRain"></label>
+  <label class="sw"><span>Вибрация</span><input type="checkbox" id="tVib"></label>
+  <div class="grp">Ещё</div>
+  <div class="mbtns"><button id="bShower" class="btn" type="button">Звёздный дождь</button><button id="bFavs" class="btn" type="button">Мои закладки</button><button id="bMine" class="btn primary" type="button">Добавить свою звезду</button><button id="bGuide" class="btn" type="button">Спросить мини-Артёма</button><button id="bReset" class="btn" type="button">Начать заново</button></div>
+</div></div>
+
+<div id="mGuide" class="modal" hidden><div class="card wide guide" role="dialog" aria-label="Как это работает">
+  <svg id="gCat" viewBox="0 0 80 70" aria-hidden="true"><path d="M12 30 L16 6 L32 18 Q40 16 48 18 L64 6 L68 30 Q74 42 66 54 Q54 66 40 66 Q26 66 14 54 Q6 42 12 30Z"/><ellipse class="eye" cx="29" cy="36" rx="3.2" ry="4.4"/><ellipse class="eye" cx="51" cy="36" rx="3.2" ry="4.4"/><path class="nose" d="M37 45 L43 45 L40 49Z"/><path d="M40 49 Q36 54 32 52M40 49 Q44 54 48 52M22 44 L8 41M22 48 L8 50M58 44 L72 41M58 48 L72 50" fill="none"/></svg>
+  <div id="gBody" class="gbody"><div id="gG" class="glyph"></div><h3 id="gT"></h3><p id="gX"></p></div>
+  <div id="gD" class="dots"></div>
+  <div class="row2"><button id="gPrev" class="btn" type="button">Назад</button><button id="gNext" class="btn primary" type="button">Далее</button></div>
+  <button id="gSkip" class="skipl" type="button">Пропустить</button>
+</div></div>
+
+<div id="mMine" class="modal" hidden><div class="card wide" role="dialog" aria-label="Твоя звезда">
+  <div class="sheet-head"><h3>Твоя звезда</h3><button class="x" data-close aria-label="Закрыть">×</button></div>
+  <p class="small">Теперь твоя очередь. Напиши, за что ты любишь меня: твоя звезда загорится рядом с моими. Можно добавить до 24 звёзд.</p>
+  <input id="mTitle" maxlength="40" placeholder="Название, например: «Твои шутки»" autocomplete="off">
+  <textarea id="mText" maxlength="240" rows="4" placeholder="Что ты хочешь мне сказать?"></textarea>
+  <div class="small" id="mCount">0 / 240</div>
+  <div class="row2"><button id="mAdd" class="btn primary" type="button">Зажечь звезду</button><button id="mSend" class="btn" type="button">Отправить Артёму</button></div>
+</div></div>
+
+<div id="mReset" class="modal" hidden>
+  <div class="card" role="alertdialog" aria-labelledby="mrT">
+    <h3 id="mrT">Начать заново?</h3>
+    <p>Все открытые звёзды снова погаснут. Это действие нельзя отменить.</p>
+    <div class="row2"><button id="mrNo" class="btn">Отмена</button><button id="mrYes" class="btn primary">Сбросить</button></div>
+  </div>
+</div>
+
+<div id="mImg" class="modal" hidden>
+  <div class="card">
+    <img id="miImg" alt="Наше созвездие">
+    <p class="small">На iPhone: нажми на картинку и удерживай, затем выбери «Сохранить в Фото».</p>
+    <div class="row2"><a id="miDl" class="btn primary" download="nashe-sozvezdie.png">Скачать PNG</a><button id="miClose" class="btn">Закрыть</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   ВСЕ ТЕКСТЫ САЙТА — РЕДАКТИРУЙ ЗДЕСЬ
+   ===================================================================== */
+const DATA = {
+  title: '100 причин, почему именно ты',
+  subtitle: 'Карина, где-то среди миллиардов звёзд есть сто, которые я посвятил тебе.',
+  startLabel: 'Найти наши звёзды',
+  hintTouch: 'Вращай созвездие пальцем. Приближай двумя пальцами. Нажимай на звёзды, чтобы открывать причины.',
+  hintMouse: 'Вращай созвездие мышью. Приближай колёсиком. Нажимай на звёзды, чтобы открывать причины.',
+
+  chapters: [
+    'Улыбка и взгляд',
+    'Твой характер',
+    'Твои маленькие особенности',
+    'Что я чувствую рядом с тобой',
+    'Наши моменты',
+    'Как ты делаешь мои дни лучше',
+    'За что я тебя уважаю',
+    'Что делает тебя особенной',
+    'Что я ценю в нас',
+    'Наша история дальше'
+  ],
+
+  // По 10 причин на главу, порядок важен: 1–10 — глава 1, 11–20 — глава 2 и т.д.
+  reasons: [
+    // 1. Улыбка и внешность
+    ['Твоя улыбка','Она появляется — и день сразу становится на тон теплее. Я ловлю себя на том, что стараюсь вызвать её снова и снова.'],
+    ['Твой взгляд','В нём столько жизни, что мне иногда хочется просто молча смотреть в ответ.'],
+    ['Твой смех','Он заразительный. Стоит тебе рассмеяться — и я уже улыбаюсь, даже не зная, над чем.'],
+    ['Ты, когда задумалась','У тебя особенное выражение лица, когда ты где-то глубоко в мыслях. Я бы многое отдал, чтобы узнать, о чём они.'],
+    ['Твоя рука в моей','Такая простая вещь, а после неё всё вокруг становится спокойнее.'],
+    ['Ты в любом виде','Нарядная, уставшая, растрёпанная — мне нравится любая версия. Красота в тебе не зависит от обстоятельств.'],
+    ['Как ты входишь в комнату','Ты появляешься — и пространство вокруг меняется. Не знаю, как ты это делаешь, но я это чувствую.'],
+    ['Глаза, когда ты радуешься','Они начинают светиться по-особенному. Я стараюсь запоминать эти моменты.'],
+    ['Твой голос','Я мог бы слушать его очень долго. Даже если бы ты читала вслух инструкцию к чайнику.'],
+    ['Лицо, на которое хочется смотреть','Утром, вечером, в хороший день и в плохой — это лицо мне всегда в радость.'],
+
+    // 2. Характер
+    ['Твоя доброта','Ты умеешь быть мягкой, не становясь слабой. Это редкое сочетание.'],
+    ['Твоя искренность','С тобой можно быть настоящим. Ты не требуешь масок — и поэтому рядом с тобой я сам становлюсь честнее.'],
+    ['Твоё чувство юмора','Ты умеешь рассмешить в самый неожиданный момент. Иногда я потом ещё долго вспоминаю твои фразы.'],
+    ['Твоя чуткость','Ты замечаешь то, что другие пропускают. Благодаря этому людям рядом с тобой становится чуть теплее.'],
+    ['Твоё упрямство','Да-да, оно тоже в списке. Когда ты чего-то хочешь, с тобой не поспоришь — и это по-своему восхитительно.'],
+    ['Твоя нежность','Она бывает громкой, а бывает почти незаметной. Но я всегда её чувствую.'],
+    ['Твоя смелость','Ты не боишься быть собой. Мне кажется, это одна из самых красивых форм смелости.'],
+    ['Твоя спокойная мудрость','В тебе есть что-то глубокое, что не нуждается в громких словах.'],
+    ['Твоё любопытство','Тебе интересен мир, и это заразительно. Рядом с тобой я тоже начинаю замечать больше.'],
+    ['Твоя честность со мной','Даже когда правда не самая удобная, ты говоришь её бережно. Я это очень ценю.'],
+
+    // 3. Привычки и маленькие особенности
+    ['Твои маленькие странности','Мне нравятся они все. Они делают тебя тобой, и я не хотел бы ничего в них менять.'],
+    ['Как ты увлекаешься','Когда тебя что-то захватывает, ты вся в этом. Наблюдать за этим — отдельное удовольствие.'],
+    ['Твоя мимика','Лицо у тебя такое живое, что слова иногда вообще не нужны.'],
+    ['Как ты говоришь о любимом','Глаза загораются, слова ускоряются. Я готов слушать про что угодно, если рассказываешь ты.'],
+    ['Твои сообщения','Даже короткое «привет» от тебя способно изменить мне настроение. Я не шучу.'],
+    ['Сонная ты','Одна из самых милых версий. Иногда я этим слегка злоупотребляю и просто любуюсь.'],
+    ['Твои маленькие ритуалы','У каждого человека они есть. Твои я начинаю узнавать и любить.'],
+    ['Радость от мелочей','Тебе не нужен повод для большого праздника. Ты умеешь превратить в праздник обычную мелочь.'],
+    ['Когда ты притворно обижаешься','Выглядит убедительно. Почти. Но я всё равно сдаюсь первым.'],
+    ['Твой собственный стиль','То, как ты держишься, выбираешь, сочетаешь, — всё это очень по-твоему. Подделать такое невозможно.'],
+
+    // 4. Мои чувства рядом
+    ['Спокойствие','Рядом с тобой внутри становится тише. Мир остаётся прежним, но мне в нём проще дышать.'],
+    ['Ощущение дома','Дом — это не всегда место. Иногда это человек. Для меня таким человеком становишься ты.'],
+    ['Лёгкость','Рядом с тобой мне не нужно ничего изображать. Это огромное облегчение.'],
+    ['Тёплое волнение','Иногда достаточно увидеть твоё имя на экране — и внутри что-то радостно вздрагивает.'],
+    ['Уверенность','С тобой я чувствую, что могу больше. Не потому что ты требуешь, а потому что веришь.'],
+    ['Смущение','Рядом с тобой я иногда теряюсь и не нахожу слов. Видимо, поэтому и сделал этот сайт.'],
+    ['Желание быть лучше','Не потому что ты просишь. Просто рядом с тобой этого хочется само собой.'],
+    ['Безопасность','Рядом с тобой я не боюсь быть неидеальным. Это дорогого стоит.'],
+    ['Радость без повода','Бывает, я просто думаю о тебе — и становится хорошо. Без причины и без объяснений.'],
+    ['Скучаю','Странно, как быстро человек становится частью твоего ритма. Когда тебя нет рядом, мне тебя не хватает.'],
+
+    // 5. Наши моменты
+    ['Наш смех','У каждой пары есть свой особый смех. Наш я люблю больше всех остальных.'],
+    ['Наши разговоры','Мне нравится говорить с тобой обо всём: о важном, о ерунде и о чём-то посередине.'],
+    ['Тишина вдвоём','Нам не нужно заполнять паузы. Молчать рядом с тобой тоже приятно.'],
+    ['Обычные вечера','Лучшие воспоминания часто сделаны из простого: из разговоров, шуток и ощущения «мы вместе».'],
+    ['Наши словечки','Когда у двоих появляются свои шутки и намёки, их никто больше не понимает. В этом вся прелесть.'],
+    ['Наши планы','Мне нравится строить с тобой планы — и большие, и совсем крошечные. Даже самые смешные.'],
+    ['Взгляды украдкой','Иногда я ловлю твой взгляд и понимаю: ты тоже на меня смотришь. Такие мгновения я бы сохранил навсегда.'],
+    ['Объятия','В них вся усталость куда-то уходит. Лучшее лекарство, которое я знаю.'],
+    ['Просто рядом','Не нужно ничего особенного. Мне достаточно знать, что ты рядом.'],
+    ['Всё «впервые»','Каждое новое «в первый раз» с тобой запоминается ярче многих привычных вещей.'],
+
+    // 6. Как она делает мои дни лучше
+    ['Мысль о тебе с утра','Это лучший будильник: он не раздражает и сразу поднимает настроение.'],
+    ['Сообщения посреди дня','Несколько слов в телефоне — и середина недели вдруг становится добрее.'],
+    ['Ты умеешь утешить','Плохой день становится терпимым, когда я могу рассказать о нём тебе.'],
+    ['Ты возвращаешь мне улыбку','Даже когда всё идёт наперекосяк, ты находишь слова, после которых становится легче.'],
+    ['С тобой интереснее','Любое дело, даже самое скучное, превращается в маленькое приключение, если ты рядом.'],
+    ['Ты вдохновляешь','Рядом с тобой хочется придумывать, пробовать, делать. Ты заряжаешь, сама того не замечая.'],
+    ['Ты делаешь будни красивее','Обычный вторник вдруг оказывается самым ожидаемым днём недели.'],
+    ['Ты умеешь слушать','Когда я рассказываю, ты слушаешь по-настоящему. Мало кто так умеет.'],
+    ['Мой любимый отвлекающий фактор','Я пытаюсь сосредоточиться, а мысли снова о тебе. Прости, продуктивность, это не лечится.'],
+    ['Ты делаешь вечера теплее','Даже в самый холодный вечер мне тепло, если я знаю, что ты есть.'],
+
+    // 7. За что уважаю
+    ['Твоя сила','Ты справляешься с трудностями так, что я невольно беру с тебя пример.'],
+    ['Твоя целеустремлённость','Когда у тебя есть цель, ты идёшь к ней. Я искренне этим восхищаюсь.'],
+    ['Твоя самостоятельность','Ты умеешь принимать решения и отвечать за них. Это очень красиво.'],
+    ['Твоё трудолюбие','Я вижу, сколько усилий ты вкладываешь в то, что для тебя важно. Это вызывает настоящее уважение.'],
+    ['Твой стержень','У тебя есть то, чем ты не поступишься. Мне нравится, что рядом человек с настоящим внутренним стержнем.'],
+    ['Умение признавать ошибки','Сказать «я была не права» — редкое качество. Я ценю его, когда вижу.'],
+    ['Как ты относишься к людям','Ты уважаешь тех, кто рядом, и этим невольно учишь уважению и меня.'],
+    ['Ты не сдаёшься','Бывают сложные дни, но ты идёшь дальше. Мне хочется быть рядом на этом пути.'],
+    ['Твои мечты','Ты не боишься мечтать по-настоящему. Мне хочется помогать им сбываться.'],
+    ['Твой внутренний мир','Он глубокий и многослойный. Я с большим уважением открываю его по кусочку.'],
+
+    // 8. Что делает её особенной
+    ['Ты — одна такая','Второй тебя нет. Я проверял, чисто теоретически.'],
+    ['Тебя невозможно спутать','Ты из тех людей, которых нельзя спутать ни с кем. Один раз узнав, уже не забудешь.'],
+    ['Сильная и нежная','Мало кому удаётся совмещать это. У тебя получается так, будто иначе и быть не может.'],
+    ['Ты притягиваешь','Не только внешне. Что-то в тебе заставляет тянуться ближе и узнавать дальше.'],
+    ['Твоя естественность','Ты не стараешься казаться. И в этом особенно хороша.'],
+    ['Твоя энергия','Она бывает бурной, бывает тихой, но всегда ощутима.'],
+    ['Ты умеешь удивлять','Стоит мне решить, что я тебя узнал, — и ты оказываешься ещё интереснее.'],
+    ['Ты находишь свет в мелочах','Тебе удаётся замечать красоту в обычных вещах — и делиться этим со мной.'],
+    ['Твой взгляд на мир','У тебя особенный угол зрения. Благодаря тебе я вижу знакомые вещи по-новому.'],
+    ['Ты — моё исключение','У меня была своя система представлений о том, что мне нужно. Ты мягко и бесповоротно её перепутала.'],
+
+    // 9. Что ценю в отношениях
+    ['Доверие','Мне важно, что мы можем быть честными друг с другом. Это основа всего остального.'],
+    ['Бережность','Ты бережно относишься к моим чувствам. Я стараюсь отвечать тем же.'],
+    ['Умение говорить','Мы можем обсуждать сложное, не превращая разговор в войну. Это дорогого стоит.'],
+    ['Поддержка','Знание, что у меня есть ты, делает любое начинание чуть менее страшным.'],
+    ['Мы — на равных','Мне нравится, что мы идём рядом, а не друг за другом.'],
+    ['Свобода быть собой','Рядом с тобой не нужно меняться, чтобы тебя любили. Хочу, чтобы и тебе рядом со мной было так же.'],
+    ['Тепло повседневности','Даже в мелочах у нас получается создавать ощущение «мы». Это и есть самое ценное.'],
+    ['Юмор вдвоём','Умение посмеяться над собой и друг над другом — отдельный вид близости.'],
+    ['Терпение','Мы учимся понимать друг друга, и мне нравится этот путь — с остановками, шутками и открытиями.'],
+    ['Ты есть','Просто ты есть в моей жизни — и мне этого уже много. Всё остальное — приятные бонусы.'],
+
+    // 10. Продолжить историю
+    ['Узнавать тебя дальше','Мне кажется, у каждой тебя есть ещё одна. Я хочу встретить их всех.'],
+    ['Больше времени','Не ради чего-то особенного. Ради самого времени рядом с тобой.'],
+    ['Общие планы','От ближайших выходных до того, что пока даже страшно произносить вслух.'],
+    ['Делать тебя счастливой','Не идеально и не безошибочно, но искренне и всерьёз.'],
+    ['Новые воспоминания','Те, что пока не случились. Давай набирать их вместе — пригоршнями.'],
+    ['Быть рядом в сложные дни','Не только в весёлые. В любые.'],
+    ['Смеяться ещё долго','План очень амбициозный. Я готов.'],
+    ['Заботиться','О тебе, о нас, о маленьких вещах, которые делают отношения живыми.'],
+    ['Чтобы ты знала','Что бы ни происходило, ты для меня важна. Хочу, чтобы ты никогда в этом не сомневалась.'],
+    ['Потому что это ты','Если нужна одна причина вместо ста — вот она: это ты. Остальные просто объясняют.']
+  ],
+
+  // Тайные звёзды (открываются после 25, 50 и 75 причин)
+  secrets: [
+    ['Тайная звезда','Эту звезду можно найти, только если отдалить камеру и заглянуть за край сердца. Ты любишь находить то, что спрятано, — вот и находка.'],
+    ['Ещё один секрет','Если читаешь это, значит, ты уже дошла до середины пути и всё ещё не устала от моих слов. Спасибо за терпение.'],
+    ['Последняя тайна','Самое важное я оставил почти на финал: мне очень повезло, что ты есть. Теперь можно идти дальше.']
+  ],
+
+  // Послания на 25 / 50 / 75 / 100
+  milestones: {
+    25: 'Это только начало. Мне ещё столько хочется тебе рассказать.',
+    50: 'Половина звёзд уже горит. Но ты знаешь, что причин намного больше?',
+    75: 'Мы почти у цели. Осталось ещё немного.',
+    100: 'Теперь посмотри, что мы создали вместе.'
+  },
+
+  // Фото для особых причин: номер причины (1–100) -> путь к файлу рядом с index.html.
+  // Пример: 17: 'photos/17.jpg'. Если фото не задано или не загрузилось — рамка не показывается.
+  photos: {
+    // 17: 'photos/17.jpg',
+    // 50: 'photos/50.jpg',
+    // 100: 'photos/100.jpg'
+  },
+
+  finale: {
+    paragraphs: [
+      'И это только сто причин.',
+      'На самом деле их гораздо больше, чем можно уместить на одном экране. Мне нравится узнавать тебя всё больше, проводить с тобой время, смеяться вместе и создавать наши маленькие воспоминания.',
+      'Я не знаю, каким будет каждый следующий день, но знаю, что хочу продолжать эту историю с тобой.',
+      'Среди всех людей именно ты стала человеком, которому я захотел посвятить это маленькое созвездие.',
+      'И если бы мне дали возможность начать всё сначала, я бы снова захотел узнать именно тебя.'
+    ],
+    signature: 'Моя любимая. Мой выбор. Ты.'
+  }
+};
+/* ===================== конец блока с текстами ===================== */
+
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => Math.min(b,Math.max(a,v));
+const lerp = (a,b,t) => a+(b-a)*t;
+const easeIO = t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+const RMq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches:false};
+let RM = RMq.matches;
+try { RMq.addEventListener && RMq.addEventListener('change', e => { RM = e.matches; }); } catch(e){}
+const COARSE = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+
+/* ---------- сохранение ---------- */
+const KEY = 'stars100:v1';
+function defState(){ return {opened:[],secrets:[],ms:[],sound:true,finale:false,mine:[],fav:[],theme:'ruby',fly:true,rain:false,vib:true,guide:false,holi:''}; }
+function loadState(){
+  try{
+    const raw = localStorage.getItem(KEY); if(!raw) return defState();
+    const s = JSON.parse(raw), d = defState();
+    d.opened = Array.isArray(s.opened) ? Array.from(new Set(s.opened.filter(n=>Number.isInteger(n)&&n>=0&&n<100))) : [];
+    d.secrets = Array.isArray(s.secrets) ? Array.from(new Set(s.secrets.filter(n=>Number.isInteger(n)&&n>=0&&n<3))) : [];
+    d.ms = Array.isArray(s.ms) ? s.ms.filter(n=>[25,50,75,100].indexOf(n)>=0) : [];
+    d.sound = s.sound !== false;
+    d.finale = !!s.finale && d.opened.length === 100;
+    d.mine = Array.isArray(s.mine) ? s.mine.filter(m=>m&&typeof m.x==='string').slice(0,24).map(m=>({t:String(m.t||'').slice(0,40),x:m.x.slice(0,240)})) : [];
+    d.fav = Array.isArray(s.fav) ? Array.from(new Set(s.fav.filter(n=>Number.isInteger(n)&&n>=0&&n<100))) : [];
+    d.theme = ['ruby','dawn','night'].indexOf(s.theme)>=0 ? s.theme : 'ruby';
+    d.fly = s.fly !== false; d.rain = !!s.rain; d.vib = s.vib !== false; d.guide = !!s.guide; d.holi = typeof s.holi==='string' ? s.holi : '';
+    return d;
+  }catch(e){ return defState(); }
+}
+let S = loadState();
+const openedSet = new Set(S.opened);
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ---------- загрузка Three.js ---------- */
+const THREE_URLS = [
+  'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+  'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+  'https://unpkg.com/three@0.128.0/build/three.min.js'
+];
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement('script'); s.src=src; s.async=true;
+    s.onload=res; s.onerror=()=>rej(new Error('load '+src)); document.head.appendChild(s);
+  });
+}
+async function ensureThree(){
+  if(window.THREE) return;
+  for(const u of THREE_URLS){ try{ await loadScript(u); if(window.THREE) return; }catch(e){} }
+  throw new Error('three');
+}
+function fatal(msg){
+  $('#loadbox').classList.add('err');
+  $('#loadmsg').textContent = msg;
+  const b=$('#reload'); b.hidden=false; b.onclick=()=>location.reload();
+  $('#loader').classList.remove('gone');
+}
+
+/* ---------- запуск ---------- */
+(async function boot(){
+  try{ await ensureThree(); }
+  catch(e){ return fatal('Не удалось загрузить 3D-библиотеку. Для работы сайта нужен интернет — проверь соединение и попробуй ещё раз.'); }
+  try{ init(); }
+  catch(e){
+    console.error(e);
+    return fatal(e && e.message==='webgl'
+      ? 'Этот браузер или устройство не поддерживает WebGL, поэтому созвездие не удалось зажечь. Попробуй другой браузер (Safari, Chrome) или обнови систему.'
+      : 'Не удалось запустить 3D-графику. Обнови страницу или открой сайт в другом браузере.');
+  }
+})();
+
+function init(){
+const THREE = window.THREE;
+const off = [];
+function on(el,ev,fn,opt){ el.addEventListener(ev,fn,opt); off.push(()=>el.removeEventListener(ev,fn,opt)); }
+
+/* ---------- рендерер ---------- */
+const canvas = $('#c'), stageEl = $('#stage');
+let renderer;
+try{
+  renderer = new THREE.WebGLRenderer({canvas, antialias:false, alpha:true, powerPreference:'high-performance'});
+}catch(e){ throw new Error('webgl'); }
+if(!renderer || !renderer.getContext()) throw new Error('webgl');
+renderer.setClearColor(0x000000,0);
+
+const lowEnd = (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=4) || (navigator.deviceMemory && navigator.deviceMemory<=4) || Math.min(innerWidth,innerHeight)<500;
+let PR = Math.min(window.devicePixelRatio||1, lowEnd?2:2.5);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50,1,0.1,400);
+const uScale = {value:1500};
+const uTime = {value:0};
+
+/* ---------- шейдеры ---------- */
+const STAR_VS = `
+attribute float aSize; attribute vec3 aColor; attribute float aBright; attribute float aPhase;
+attribute float aState; attribute float aVis; attribute float aFlash;
+uniform float uTime; uniform float uScale;
+varying vec3 vCol; varying float vA; varying float vOpen;
+void main(){
+  vec4 mv = modelViewMatrix*vec4(position,1.0);
+  float tw = 0.74+0.26*sin(uTime*(0.7+aPhase*1.6)+aPhase*40.0);
+  tw = mix(tw, 0.93+0.07*sin(uTime*1.1+aPhase*20.0), aState);
+  float size = aSize*(1.0+aState*0.55+aFlash*1.7)*aVis;
+  gl_PointSize = clamp(size*uScale/(-mv.z),1.0,160.0);
+  gl_Position = projectionMatrix*mv;
+  vCol = mix(aColor, vec3(1.0,0.86,0.55), aState*0.55+aFlash*0.45);
+  vA = aBright*tw*(1.0+aState*0.55+aFlash*1.6)*aVis;
+  vOpen = aState;
+}`;
+const STAR_FS = `
+varying vec3 vCol; varying float vA; varying float vOpen;
+void main(){
+  vec2 p = gl_PointCoord-0.5;
+  float d = length(p)*2.0;
+  if(d>1.0) discard;
+  float core = exp(-d*d*38.0)*1.4;
+  float mid = exp(-d*d*9.0)*0.55;
+  float halo = exp(-d*3.2)*0.22;
+  vec2 q = abs(p);
+  float sp = (exp(-q.x*70.0)*exp(-q.y*5.5)+exp(-q.y*70.0)*exp(-q.x*5.5))*(1.0-d)*(0.35+0.65*vOpen);
+  vec2 r = abs(vec2(p.x+p.y,p.x-p.y)*0.7071);
+  float sp2 = (exp(-r.x*90.0)*exp(-r.y*9.0)+exp(-r.y*90.0)*exp(-r.x*9.0))*(1.0-d)*0.35*vOpen;
+  vec3 hot = mix(vCol, vec3(1.0,0.97,0.92), clamp(core,0.0,1.0));
+  vec3 col = hot*(core+mid) + vCol*(halo+sp+sp2) + vec3(1.0,0.9,0.78)*core*0.3*vOpen;
+  gl_FragColor = vec4(col*vA,1.0);
+}`;
+const LINE_VS = `
+attribute float aAlong; attribute float aT0; attribute float aPos;
+uniform float uTime; uniform float uWave;
+varying float vAlong; varying float vProg; varying float vGlow;
+void main(){
+  vAlong = aAlong;
+  vProg = clamp((uTime-aT0)/1.4,0.0,1.0);
+  float w = 0.0;
+  if(aPos>=0.0){ float d=abs(aPos-uWave); d=min(d,1.0-d); w=exp(-d*d*700.0); }
+  vGlow = w;
+  gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);
+}`;
+const LINE_FS = `
+uniform vec3 uCol; uniform float uAlpha; uniform float uWaveAmp; uniform float uTime;
+varying float vAlong; varying float vProg; varying float vGlow;
+void main(){
+  if(vProg<=0.001 || vAlong>vProg) discard;
+  float pulse = 0.78+0.22*sin(vAlong*9.0-uTime*1.8);
+  float a = uAlpha*pulse*(0.6+0.8*sin(vAlong*3.14159)) + vGlow*uWaveAmp*1.5;
+  gl_FragColor = vec4(uCol*a,1.0);
+}`;
+const PART_VS = `
+attribute float aLife; attribute float aSz;
+uniform float uScale; varying float vL;
+void main(){
+  vL = aLife;
+  vec4 mv = modelViewMatrix*vec4(position,1.0);
+  gl_PointSize = clamp(aSz*uScale/(-mv.z),0.0,60.0)*step(0.001,aLife);
+  gl_Position = projectionMatrix*mv;
+}`;
+const PART_FS = `
+varying float vL;
+void main(){
+  float d = length(gl_PointCoord-0.5)*2.0;
+  if(d>1.0) discard;
+  float g = exp(-d*d*6.0)+exp(-d*d*40.0);
+  vec3 c = mix(vec3(1.0,0.32,0.42),vec3(1.0,0.86,0.56),vL);
+  gl_FragColor = vec4(c*g*vL*1.4,1.0);
+}`;
+
+/* ---------- детерминированная раскладка сердца ---------- */
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return((t^t>>>14)>>>0)/4294967296; }; }
+const rand = rng(20261028);
+function heartRaw(t){ return [16*Math.pow(Math.sin(t),3), 13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t)]; }
+const MPOLY = 1600;
+let rawPts = [], rminY=1e9, rmaxY=-1e9;
+for(let i=0;i<=MPOLY;i++){ const p=heartRaw(i/MPOLY*Math.PI*2); rawPts.push(p); rminY=Math.min(rminY,p[1]); rmaxY=Math.max(rmaxY,p[1]); }
+const HCY = (rminY+rmaxY)/2, HSC = 4.7/16;
+const poly = rawPts.map(p=>[p[0]*HSC,(p[1]-HCY)*HSC]);
+const halfW = 4.7, halfH = (rmaxY-rminY)/2*HSC;
+const cum=[0]; for(let i=1;i<poly.length;i++) cum.push(cum[i-1]+Math.hypot(poly[i][0]-poly[i-1][0],poly[i][1]-poly[i-1][1]));
+const TOTAL = cum[cum.length-1];
+const N_OUT = 56, N_IN = 44, N_SEC = 3, N_HER = 24, N = 100+N_SEC+N_HER;
+const outline=[]; { let j=0; for(let i=0;i<N_OUT;i++){ const target=TOTAL*i/N_OUT; while(j<cum.length-1 && cum[j]<target) j++; outline.push(poly[j].slice()); } }
+function inside(x,y){ let c=false; for(let i=0,j=poly.length-1;i<poly.length;j=i++){ const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1]; if(((yi>y)!==(yj>y)) && (x<(xj-xi)*(y-yi)/(yj-yi)+xi)) c=!c; } return c; }
+function distOutline(x,y){ let m=1e9; for(let i=0;i<poly.length;i+=2){ const d=Math.hypot(poly[i][0]-x,poly[i][1]-y); if(d<m) m=d; } return m; }
+const interior=[]; { let tries=0,minD=0.8; while(interior.length<N_IN && tries<30000){ tries++; if(tries%1200===0) minD*=0.92;
+  const x=(rand()*2-1)*halfW, y=(rand()*2-1)*halfH; if(!inside(x,y)) continue; if(distOutline(x,y)<0.55) continue;
+  let ok=true; for(const q of outline){ if(Math.hypot(q[0]-x,q[1]-y)<minD){ok=false;break;} }
+  if(ok) for(const q of interior){ if(Math.hypot(q[0]-x,q[1]-y)<minD){ok=false;break;} }
+  if(ok) interior.push([x,y]); } }
+while(interior.length<N_IN){ const x=(rand()*2-1)*halfW*0.7, y=(rand()*2-1)*halfH*0.6; if(inside(x,y)) interior.push([x,y]); }
+interior.sort((a,b)=>b[1]-a[1]);
+
+const P = new Float32Array(N*3), aSizeA=new Float32Array(N), aColA=new Float32Array(N*3), aBrA=new Float32Array(N), aPhA=new Float32Array(N);
+const aStA=new Float32Array(N), aVisA=new Float32Array(N), aFlA=new Float32Array(N);
+const visTarget = new Float32Array(N), flash = new Float32Array(N);
+const PAL=[[1,.78,.42],[1,.3,.38],[1,.93,.82]];
+function placeStar(k,x,y,z,secret){
+  P[k*3]=x;P[k*3+1]=y;P[k*3+2]=z;
+  const r=rand(); let c=r<.42?PAL[0]:r<.72?PAL[1]:PAL[2]; if(secret) c=[1,.62,.56];
+  aColA[k*3]=c[0];aColA[k*3+1]=c[1];aColA[k*3+2]=c[2];
+  let s=.34+rand()*.34; if(rand()<.12) s+=.3; if(secret) s=.55;
+  aSizeA[k]=s; aBrA[k]=secret?.95:.55+rand()*.45; aPhA[k]=rand();
+}
+for(let i=0;i<N_OUT;i++) placeStar(i,outline[i][0],outline[i][1],1.3*Math.sin(i/N_OUT*Math.PI*6+.8)+(rand()-.5)*.6,false);
+for(let i=0;i<N_IN;i++) placeStar(N_OUT+i,interior[i][0],interior[i][1],(rand()-.5)*5.6,false);
+const SEC_POS=[[-6.6,2.8,-3.4],[6.4,-3.8,-2.6],[0.6,6.6,-4.2]];
+for(let j=0;j<N_SEC;j++) placeStar(100+j,SEC_POS[j][0],SEC_POS[j][1],SEC_POS[j][2],true);
+const SEC_AT=[25,50,75];
+
+// перестановка: звезда k <-> причина
+const perm=[...Array(100).keys()]; for(let i=99;i>0;i--){ const j=(rand()*(i+1))|0; const t=perm[i]; perm[i]=perm[j]; perm[j]=t; }
+const reasonOfStar=perm, starOfReason=new Array(100); perm.forEach((r,k)=>{ starOfReason[r]=k; });
+// её звёзды: кольцо вокруг сердца (цвет — жемчужно-сиреневый)
+for(let j=0;j<N_HER;j++){ const k=103+j, a=j/N_HER*Math.PI*2+.4, rr_=7.2+(j%3)*.6;
+  P[k*3]=Math.cos(a)*rr_*1.1; P[k*3+1]=Math.sin(a)*rr_*.85; P[k*3+2]=Math.sin(a*2)*2.4;
+  aColA[k*3]=.8; aColA[k*3+1]=.76; aColA[k*3+2]=1; aSizeA[k]=.62; aBrA[k]=.95; aPhA[k]=(j*.37)%1; }
+/* ---------- скрытые фигуры: при повороте по горизонтали звёзды складываются в другие рисунки ---------- */
+const FIGS=[{n:'Сердце',psi:0},{n:'Цветок',psi:Math.PI/2},{n:'Бабочка',psi:Math.PI/4}];
+const figSegs=[[],[]], starOfFl=[], starOfBf=[];
+{ const fl=[], bf=[], fs=[], bs=[], cy=1.7, R=2.5;
+  for(let i=0;i<52;i++){ const a=i/52*Math.PI*2, r=R*(.42+.58*Math.abs(Math.cos(2.5*a))); fl.push([r*Math.sin(a),cy+r*Math.cos(a)]); fs.push([i,(i+1)%52]); }
+  for(let i=0;i<8;i++){ const a=i/8*Math.PI*2; fl.push([.55*Math.sin(a),cy+.55*Math.cos(a)]); fs.push([52+i,52+(i+1)%8]); }
+  for(let i=0;i<14;i++){ const t=i/13; fl.push([.25*Math.sin(t*3),cy-1.1+(-halfH+.1-(cy-1.1))*t]); if(i<13) fs.push([60+i,61+i]); }
+  [[1.6,-1.5,.5,74],[-1.6,-2.5,-.5,87]].forEach(L=>{ for(let i=0;i<13;i++){ const a=i/13*Math.PI*2, lx=1.3*Math.cos(a), ly=.5*Math.sin(a), c=Math.cos(L[2]), sn=Math.sin(L[2]); fl.push([L[0]+lx*c-ly*sn,L[1]+lx*sn+ly*c]); fs.push([L[3]+i,L[3]+(i+1)%13]); } });
+  let mv=0; for(let i=0;i<100;i++){ const th=i/100*12*Math.PI, e=Math.exp(Math.cos(th))-2*Math.cos(4*th)-Math.pow(Math.sin(th/12),5); bf.push([Math.sin(th)*e,Math.cos(th)*e]); mv=Math.max(mv,Math.abs(Math.cos(th)*e)); bs.push([i,(i+1)%100]); }
+  const kk=Math.min(.95,halfH*.98/mv); bf.forEach(p=>{ p[0]*=kk; p[1]*=kk; });
+  const ord=[...Array(100).keys()].sort((a,b)=>P[a*3+1]-P[b*3+1]), byV=pts=>[...Array(100).keys()].sort((a,b)=>pts[a][1]-pts[b][1]), sg=[], tg=[], fo=byV(fl), bo=byV(bf);
+  ord.forEach((k,i)=>{ sg[k]=fo[i]; tg[k]=bo[i]; });
+  const r2=rng(5151), S2=Math.SQRT1_2, cost=(k,sj,tj)=>{ const dv=fl[sj][1]-P[k*3+1], dw=bf[tj][1]-P[k*3+1], dc=(P[k*3]+fl[sj][0])*S2-bf[tj][0]; return 1.6*dv*dv+1.6*dw*dw+dc*dc; };
+  for(let it=0;it<40000;it++){ const T=1.2*(1-it/40000)+.003, a=(r2()*100)|0, b=(r2()*100)|0; if(a===b) continue;
+    if(it&1){ const c0=cost(a,sg[a],tg[a])+cost(b,sg[b],tg[b]), c1=cost(a,sg[b],tg[a])+cost(b,sg[a],tg[b]); if(c1<c0||r2()<Math.exp((c0-c1)/T)){ const t=sg[a]; sg[a]=sg[b]; sg[b]=t; } }
+    else { const c0=cost(a,sg[a],tg[a])+cost(b,sg[b],tg[b]), c1=cost(a,sg[a],tg[b])+cost(b,sg[b],tg[a]); if(c1<c0||r2()<Math.exp((c0-c1)/T)){ const t=tg[a]; tg[a]=tg[b]; tg[b]=t; } } }
+  const D0=18;
+  for(let k=0;k<100;k++){ const z=fl[sg[k]][0], zc=z*(D0-P[k*3])/D0, f=(D0-zc)/D0; P[k*3]*=f; P[k*3+1]*=f; P[k*3+2]=zc; starOfFl[sg[k]]=k; starOfBf[tg[k]]=k; }
+  fs.forEach(p=>figSegs[0].push([starOfFl[p[0]],starOfFl[p[1]]])); bs.forEach(p=>figSegs[1].push([starOfBf[p[0]],starOfBf[p[1]]]));
+}
+
+/* ---------- сцена ---------- */
+const world = new THREE.Group(); scene.add(world);
+const dustGroup = new THREE.Group(); scene.add(dustGroup);
+const disposables=[];
+
+function starGeom(count){
+  const g=new THREE.BufferGeometry(); return g;
+}
+const starGeo = new THREE.BufferGeometry();
+starGeo.setAttribute('position',new THREE.BufferAttribute(P,3));
+starGeo.setAttribute('aSize',new THREE.BufferAttribute(aSizeA,1));
+starGeo.setAttribute('aColor',new THREE.BufferAttribute(aColA,3));
+starGeo.setAttribute('aBright',new THREE.BufferAttribute(aBrA,1));
+starGeo.setAttribute('aPhase',new THREE.BufferAttribute(aPhA,1));
+starGeo.setAttribute('aState',new THREE.BufferAttribute(aStA,1).setUsage(THREE.DynamicDrawUsage));
+starGeo.setAttribute('aVis',new THREE.BufferAttribute(aVisA,1).setUsage(THREE.DynamicDrawUsage));
+starGeo.setAttribute('aFlash',new THREE.BufferAttribute(aFlA,1).setUsage(THREE.DynamicDrawUsage));
+const starMat = new THREE.ShaderMaterial({uniforms:{uTime,uScale},vertexShader:STAR_VS,fragmentShader:STAR_FS,transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending});
+const stars = new THREE.Points(starGeo,starMat); stars.frustumCulled=false; stars.renderOrder=3; world.add(stars);
+disposables.push(starGeo,starMat);
+
+// пыль + скрытые фигуры
+function makePointsLayer(arr){ // arr: [x,y,z,size,bright]
+  const n=arr.length, pos=new Float32Array(n*3), sz=new Float32Array(n), col=new Float32Array(n*3), br=new Float32Array(n), ph=new Float32Array(n), st=new Float32Array(n), vis=new Float32Array(n).fill(1), fl=new Float32Array(n);
+  for(let i=0;i<n;i++){ const a=arr[i]; pos[i*3]=a[0];pos[i*3+1]=a[1];pos[i*3+2]=a[2]; sz[i]=a[3]; br[i]=a[4]; ph[i]=Math.random();
+    const r=Math.random(); const c=r<.45?PAL[0]:r<.75?PAL[1]:PAL[2]; col[i*3]=c[0];col[i*3+1]=c[1];col[i*3+2]=c[2]; }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3)); g.setAttribute('aSize',new THREE.BufferAttribute(sz,1));
+  g.setAttribute('aColor',new THREE.BufferAttribute(col,3)); g.setAttribute('aBright',new THREE.BufferAttribute(br,1));
+  g.setAttribute('aPhase',new THREE.BufferAttribute(ph,1)); g.setAttribute('aState',new THREE.BufferAttribute(st,1));
+  g.setAttribute('aVis',new THREE.BufferAttribute(vis,1)); g.setAttribute('aFlash',new THREE.BufferAttribute(fl,1));
+  const p=new THREE.Points(g,starMat); p.frustumCulled=false; disposables.push(g); return p;
+}
+const dustN = lowEnd ? 900 : 2800, dustArr=[];
+for(let i=0;i<dustN;i++){
+  const r=16+Math.pow(Math.random(),.7)*70, th=Math.random()*Math.PI*2, u=Math.random()*2-1, s=Math.sqrt(1-u*u);
+  dustArr.push([r*s*Math.cos(th),r*u,r*s*Math.sin(th),.09+Math.random()*.3,.22+Math.random()*.4]);
+}
+const dust = makePointsLayer(dustArr); dust.renderOrder=-2; dustGroup.add(dust);
+
+const figArr=[];
+for(let i=0;i<72;i++){ const a=i/72*Math.PI*2; figArr.push([Math.cos(a)*5.6,-6.2,Math.sin(a)*5.6,.1,.3]); } // кольцо
+for(let i=0;i<64;i++){ const t=i/64*Math.PI*2, d=1+Math.sin(t)*Math.sin(t); figArr.push([-8.4,Math.sin(t)*Math.cos(t)/d*7.2,Math.cos(t)/d*5.4,.1,.3]); } // знак бесконечности
+const figures = makePointsLayer(figArr); figures.renderOrder=1; world.add(figures);
+
+// туманности
+function nebTex(r,g,b){
+  const c=document.createElement('canvas'); c.width=c.height=512; const x=c.getContext('2d'), rr=rng(r*7+g*3+b);
+  for(let i=0;i<48;i++){ const a=rr()*Math.PI*2, d=Math.pow(rr(),.8)*150, px=256+Math.cos(a)*d, py=256+Math.sin(a)*d*.8, rad=40+rr()*95;
+    const gr=x.createRadialGradient(px,py,0,px,py,rad), k=.05+rr()*.1; gr.addColorStop(0,`rgba(${r},${g},${b},${k})`); gr.addColorStop(1,`rgba(${r},${g},${b},0)`); x.fillStyle=gr; x.fillRect(0,0,512,512); }
+  const t=new THREE.CanvasTexture(c); disposables.push(t); return t;
+}
+const nebs=[]; [[120,12,40,-26,10,-58,90,.2],[170,30,52,30,-14,-66,100,.16],[84,10,62,6,24,-72,110,.14],[210,128,60,-34,-20,-60,70,.07],[150,16,40,22,22,-52,80,.12]].forEach(d=>{
+  const m=new THREE.SpriteMaterial({map:nebTex(d[0],d[1],d[2]),transparent:true,opacity:d[7]*3.2,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:false});
+  const s=new THREE.Sprite(m); s.position.set(d[3],d[4],d[5]); s.scale.set(d[6],d[6],1); s.renderOrder=-3; dustGroup.add(s); nebs.push(s); disposables.push(m);
+});
+
+// линии между открытыми звёздами
+const MAXE=300;
+function lineGeo(max){
+  const g=new THREE.BufferGeometry();
+  const pos=new Float32Array(max*6), al=new Float32Array(max*2), t0=new Float32Array(max*2), ps=new Float32Array(max*2).fill(-1);
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3).setUsage(THREE.DynamicDrawUsage));
+  g.setAttribute('aAlong',new THREE.BufferAttribute(al,1).setUsage(THREE.DynamicDrawUsage));
+  g.setAttribute('aT0',new THREE.BufferAttribute(t0,1).setUsage(THREE.DynamicDrawUsage));
+  g.setAttribute('aPos',new THREE.BufferAttribute(ps,1).setUsage(THREE.DynamicDrawUsage));
+  g.setDrawRange(0,0); disposables.push(g); return g;
+}
+function lineMat(col,alpha){
+  const m=new THREE.ShaderMaterial({uniforms:{uTime,uWave:{value:0},uCol:{value:new THREE.Color(col[0],col[1],col[2])},uAlpha:{value:alpha},uWaveAmp:{value:0}},
+    vertexShader:LINE_VS,fragmentShader:LINE_FS,transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending});
+  disposables.push(m); return m;
+}
+const eg=lineGeo(MAXE), eMat=lineMat([.95,.62,.45],.5);
+const edgeLines=new THREE.LineSegments(eg,eMat); edgeLines.frustumCulled=false; edgeLines.renderOrder=2; world.add(edgeLines);
+let eCount=0; const edgeKeys=new Set();
+function addEdge(a,b,t0){
+  if(eCount>=MAXE) return; const key=a<b?a+'-'+b:b+'-'+a; if(edgeKeys.has(key)) return; edgeKeys.add(key);
+  const pa=eg.attributes.position.array, i=eCount;
+  pa[i*6]=P[a*3];pa[i*6+1]=P[a*3+1];pa[i*6+2]=P[a*3+2];pa[i*6+3]=P[b*3];pa[i*6+4]=P[b*3+1];pa[i*6+5]=P[b*3+2];
+  eg.attributes.aAlong.array[i*2]=0; eg.attributes.aAlong.array[i*2+1]=1;
+  eg.attributes.aT0.array[i*2]=t0; eg.attributes.aT0.array[i*2+1]=t0;
+  eCount++; ['position','aAlong','aT0'].forEach(n=>{ eg.attributes[n].needsUpdate=true; }); eg.setDrawRange(0,eCount*2);
+}
+function clearEdges(){ eCount=0; edgeKeys.clear(); eg.setDrawRange(0,0); }
+function addEdgesFor(k,instant){
+  const t0 = instant ? -10 : uTime.value;
+  const cand=[]; openedSet.forEach(r=>{ const o=starOfReason[r]; if(o!==k) cand.push([Math.hypot(P[o*3]-P[k*3],P[o*3+1]-P[k*3+1],P[o*3+2]-P[k*3+2]),o]); });
+  cand.sort((a,b)=>a[0]-b[0]);
+  if(cand[0]) addEdge(k,cand[0][1],t0);
+  if(cand[1] && cand[1][0]<3.4) addEdge(k,cand[1][1],t0);
+}
+// сердце (финал)
+const hg=lineGeo(N_OUT), hMat=lineMat([1,.6,.52],.18);
+{ const pa=hg.attributes.position.array, al=hg.attributes.aAlong.array, ps=hg.attributes.aPos.array, t0=hg.attributes.aT0.array;
+  for(let e=0;e<N_OUT;e++){ const a=e,b=(e+1)%N_OUT;
+    pa[e*6]=P[a*3];pa[e*6+1]=P[a*3+1];pa[e*6+2]=P[a*3+2];pa[e*6+3]=P[b*3];pa[e*6+4]=P[b*3+1];pa[e*6+5]=P[b*3+2];
+    al[e*2]=0;al[e*2+1]=1; ps[e*2]=e/N_OUT; ps[e*2+1]=(e+1)/N_OUT; t0[e*2]=t0[e*2+1]=1e9; }
+  hg.setDrawRange(0,N_OUT*2); }
+const heartLines=new THREE.LineSegments(hg,hMat); heartLines.frustumCulled=false; heartLines.renderOrder=2; world.add(heartLines);
+const figMat=figSegs.map((segs,fi)=>{ const g=lineGeo(segs.length), m=lineMat(fi?[.72,.82,1]:[1,.74,.8],0), pa=g.attributes.position.array, al=g.attributes.aAlong.array, t0=g.attributes.aT0.array;
+  segs.forEach((q,e)=>{ for(let c=0;c<3;c++){ pa[e*6+c]=P[q[0]*3+c]; pa[e*6+3+c]=P[q[1]*3+c]; } al[e*2]=0; al[e*2+1]=1; t0[e*2]=t0[e*2+1]=-10; });
+  g.setDrawRange(0,segs.length*2); const l=new THREE.LineSegments(g,m); l.frustumCulled=false; l.renderOrder=2; world.add(l); return m; });
+function setHeartInstant(onn){ const t0=hg.attributes.aT0.array; for(let i=0;i<t0.length;i++) t0[i]=onn?-10:1e9; hg.attributes.aT0.needsUpdate=true; heartShown=onn; }
+let heartShown=false;
+const heartMat=new THREE.ShaderMaterial({uniforms:{uTime,uK:{value:.25}},
+  vertexShader:`varying vec3 vN,vV,vP;void main(){vN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);vV=normalize(-mv.xyz);vP=position;gl_Position=projectionMatrix*mv;}`,
+  fragmentShader:`uniform float uTime,uK;varying vec3 vN,vV,vP;void main(){float f=1.-abs(dot(normalize(vN),normalize(vV)));float rim=pow(f,3.4)*.3;float s=fract(vP.x*.05+vP.y*.035-uTime*.06);float sh=exp(-pow((s-.5)*8.,2.));vec3 irid=.5+.5*cos(6.2831*(f*1.1+vec3(0.,.12,.27)+uTime*.02));vec3 c=vec3(.5,.05,.14)*(.2+.8*f)+irid*vec3(.95,.5,.55)*rim*1.1+vec3(1.,.86,.72)*sh*(.25+.6*f);gl_FragColor=vec4(c*uK,1.);}`,
+  transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});
+const hShape=new THREE.Shape(); poly.filter((_,i)=>i%8===0).forEach((p,i)=>{ if(i) hShape.lineTo(p[0],p[1]); else hShape.moveTo(p[0],p[1]); });
+const heartGeo=new THREE.ExtrudeGeometry(hShape,{depth:2.2,bevelEnabled:true,bevelThickness:1.1,bevelSize:.7,bevelSegments:10,curveSegments:1}); heartGeo.translate(0,0,-1.1);
+const heartMesh=new THREE.Mesh(heartGeo,heartMat); heartMesh.frustumCulled=false; heartMesh.renderOrder=0; world.add(heartMesh); disposables.push(heartGeo,heartMat);
+
+// частицы-вспышки
+const PN = lowEnd ? 120 : 200;
+const pPos=new Float32Array(PN*3), pLife=new Float32Array(PN), pSz=new Float32Array(PN), pVel=new Float32Array(PN*3), pAge=new Float32Array(PN), pDur=new Float32Array(PN);
+const pg=new THREE.BufferGeometry();
+pg.setAttribute('position',new THREE.BufferAttribute(pPos,3).setUsage(THREE.DynamicDrawUsage));
+pg.setAttribute('aLife',new THREE.BufferAttribute(pLife,1).setUsage(THREE.DynamicDrawUsage));
+pg.setAttribute('aSz',new THREE.BufferAttribute(pSz,1));
+const pm=new THREE.ShaderMaterial({uniforms:{uScale},vertexShader:PART_VS,fragmentShader:PART_FS,transparent:true,depthTest:false,depthWrite:false,blending:THREE.AdditiveBlending});
+const parts=new THREE.Points(pg,pm); parts.frustumCulled=false; parts.renderOrder=4; world.add(parts); disposables.push(pg,pm);
+let pHead=0;
+function burst(k,n){
+  n = n || (RM?6:30);
+  for(let i=0;i<n;i++){ const j=pHead; pHead=(pHead+1)%PN;
+    pPos[j*3]=P[k*3];pPos[j*3+1]=P[k*3+1];pPos[j*3+2]=P[k*3+2];
+    const u=Math.random()*2-1, th=Math.random()*Math.PI*2, s=Math.sqrt(1-u*u), sp=.5+Math.random()*1.5;
+    pVel[j*3]=s*Math.cos(th)*sp; pVel[j*3+1]=u*sp; pVel[j*3+2]=s*Math.sin(th)*sp;
+    pAge[j]=0; pDur[j]=.9+Math.random()*.9; pSz[j]=.07+Math.random()*.13; pLife[j]=1; }
+  pg.attributes.aSz.needsUpdate=true;
+}
+
+/* ---------- камера и состояние ---------- */
+const DEF_Q = new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.12,0.3,0));
+const FRONT_Q = new THREE.Quaternion();
+const userQ = DEF_Q.clone();
+let dist=30, fit=20, shift=0, hasOff=false, W=innerWidth, H=innerHeight;
+let state='intro', tw=null, prevView=null, curStar=null, pendingFinale=false, fin=null;
+let vYaw=0, vPitch=0, lastMoveT=0;
+const AX=new THREE.Vector3(1,0,0), AY=new THREE.Vector3(0,1,0), AZ=new THREE.Vector3(0,0,1);
+const qa=new THREE.Quaternion(), qb=new THREE.Quaternion(), swayQ=new THREE.Quaternion(), eul=new THREE.Euler();
+
+function computeFit(){ const t=Math.tan(camera.fov*Math.PI/360); return Math.max((halfH+1)/t,(halfW+1.3)/(t*camera.aspect))+1; }
+let PRcur=PR;
+function resize(){
+  W=Math.max(1,stageEl.clientWidth); H=Math.max(1,stageEl.clientHeight);
+  renderer.setPixelRatio(PRcur); renderer.setSize(W,H,false);
+  camera.aspect=W/H; camera.updateProjectionMatrix();
+  uScale.value=renderer.domElement.height/(2*Math.tan(camera.fov*Math.PI/360)); fxResize(); size2d();
+  const nf=computeFit(); if(state!=='panel') dist=dist/fit*nf; fit=nf;
+  if(state==='panel' && curStar){ const h=$('#panel').offsetHeight; shift=h/2+4; }
+}
+/* ---------- живое небо ---------- */
+const MOONP=29.530588, moonAge=((Date.now()-Date.UTC(2000,0,6,18,14))/86400000%MOONP+MOONP)%MOONP, moonIll=(1-Math.cos(2*Math.PI*moonAge/MOONP))/2;
+(function(){ const a=moonAge, nm=a<1.5||a>28.1?'Новолуние':a<6.4?'Растущий серп':a<8.4?'Первая четверть':a<13.8?'Растущая луна':a<15.8?'Полнолуние':a<21?'Убывающая луна':a<23?'Последняя четверть':'Убывающий серп';
+  $('#tMoon').textContent=nm+', '+Math.round(moonIll*100)+'%';
+  const c=document.createElement('canvas'); c.width=c.height=256; const x=c.getContext('2d'), R=70, cx=128;
+  const hl=x.createRadialGradient(cx,cx,R*.8,cx,cx,128); hl.addColorStop(0,'rgba(255,235,200,.3)'); hl.addColorStop(1,'rgba(255,235,200,0)'); x.fillStyle=hl; x.fillRect(0,0,256,256);
+  x.fillStyle='rgba(120,100,120,.22)'; x.beginPath(); x.arc(cx,cx,R,0,6.283); x.fill();
+  const ph=2*Math.PI*a/MOONP, cs=Math.cos(ph), rx=Math.abs(cs)*R;
+  x.save(); x.translate(cx,cx); if(a>=MOONP/2) x.scale(-1,1); x.beginPath(); x.arc(0,0,R,-Math.PI/2,Math.PI/2,false);
+  if(cs>0) x.ellipse(0,0,rx,R,0,Math.PI/2,-Math.PI/2,true); else x.ellipse(0,0,rx,R,0,Math.PI/2,Math.PI*1.5,false);
+  x.closePath(); const g=x.createRadialGradient(-R*.3,-R*.3,5,0,0,R); g.addColorStop(0,'#fffaf0'); g.addColorStop(1,'#e9d3a8'); x.fillStyle=g; x.shadowColor='rgba(255,230,180,.9)'; x.shadowBlur=22; x.fill(); x.restore();
+  const t=new THREE.CanvasTexture(c), m=new THREE.SpriteMaterial({map:t,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:false}), sp=new THREE.Sprite(m);
+  sp.position.set(-27,17,-55); sp.scale.set(17,17,1); sp.renderOrder=-2; dustGroup.add(sp); disposables.push(t,m);
+  const h=new Date().getHours(), k=document.querySelector('.kicker'); if(k) k.textContent=(h<5||h>=23?'Доброй ночи':h<12?'Доброе утро':h<18?'Добрый день':'Добрый вечер')+', Карина'; })();
+let skyGlow=0; function calcGlow(){ const d=new Date(), h=d.getHours()+d.getMinutes()/60, g=(c,w)=>Math.exp(-Math.pow((h-c)/w,2)); skyGlow=Math.max(g(6.5,1.4),g(19.5,1.4)); }
+calcGlow(); { const gt=setInterval(calcGlow,60000); off.push(()=>clearInterval(gt)); }
+const HOLK=(function(){ const d=new Date(), m=d.getMonth()+1, n=d.getDate(); return (m===12&&n===31)||(m===1&&n===1)?'ny':m===2&&n===14?'val':m===3&&n===8?'mar':''; })();
+const HOLC={ny:['✦','255,226,150'],val:['♥','255,105,140'],mar:['❀','255,175,205']}, HP=[];
+function holiday(){ const d=new Date(), key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(), md=(d.getMonth()+1)+'-'+d.getDate();
+  const H={'12-31':'С наступающим, Карина! Пусть следующий год будет таким же тёплым, как это небо.','1-1':'С Новым годом, Карина! Пусть небо всегда будет на твоей стороне.','2-14':'С Днём всех влюблённых, Карина! Сегодня звёзды светят чуть ярче.','3-8':'С 8 Марта, Карина! Тебе сегодня положено сто звёзд и ещё одна сверху.'};
+  if(H[md]&&S.holi!==key){ S.holi=key; save(); toast(H[md]); shower(3); buzz([30,80,30,80,60]); } }
+/* ---------- темы ---------- */
+const THEMES={
+  ruby:{A:[.2,.04,.1],B:[.015,.003,.025],N1:[.6,.09,.2],N2:[.32,.11,.48],N3:[.9,.55,.3],tint:[1,1,1],fl:'255,214,140',tc:'#07010a'},
+  dawn:{A:[.5,.2,.22],B:[.1,.03,.08],N1:[.95,.4,.35],N2:[.6,.25,.5],N3:[1,.75,.45],tint:[1,.9,.8],fl:'255,232,180',tc:'#2a0d14'},
+  night:{A:[.03,.07,.2],B:[.004,.008,.03],N1:[.1,.25,.65],N2:[.35,.15,.6],N3:[.3,.7,.85],tint:[.45,.65,1],fl:'170,215,255',tc:'#030818'}};
+const thK=['A','B','N1','N2','N3'], thCur={}, thTgt={}; thK.forEach(k=>{ thCur[k]=new THREE.Vector3(); thTgt[k]=new THREE.Vector3(); });
+function stepTheme(dt,hard){ const a=hard?1:Math.min(1,dt*2.2), tn=THEMES[S.theme].tint;
+  thK.forEach(k=>{ thCur[k].lerp(thTgt[k],a); if(fx.ok) fx.cm.uniforms['u'+k].value.copy(thCur[k]); });
+  if(fx.ok) fx.cm.uniforms.uGlow.value=skyGlow*.9;
+  nebs.forEach(n=>{ const c=n.material.color; c.r+=(tn[0]-c.r)*a; c.g+=(tn[1]-c.g)*a; c.b+=(tn[2]-c.b)*a; }); }
+function applyTheme(name,hard){ if(!THEMES[name]) name='ruby'; S.theme=name; const t=THEMES[name]; thK.forEach(k=>thTgt[k].set(t[k][0],t[k][1],t[k][2]));
+  FLC=t.fl; document.documentElement.dataset.theme=name; const m=document.querySelector('meta[name=theme-color]'); if(m) m.content=t.tc; if(hard) stepTheme(1,true); save(); }
+/* ---------- 2D-слой: светлячки, дождь на стекле, звёздный дождь ---------- */
+const c2=$('#fx2d'), g2=c2.getContext('2d'); let fw=1,fh=1,fdpr=1,mx=-999,my=-999,FLC='255,214,140',dirty2=false,nextMet=18;
+function size2d(){ fdpr=PRcur; fw=innerWidth; fh=innerHeight; c2.width=Math.round(fw*fdpr); c2.height=Math.round(fh*fdpr); }
+on(window,'pointermove',e=>{ mx=e.clientX; my=e.clientY; });
+const FL=[]; for(let i=0;i<(lowEnd?14:26);i++) FL.push({x:Math.random(),y:Math.random(),a:Math.random()*6.283,s:.01+Math.random()*.02,p:Math.random()*6.283,r:1+Math.random()*1.4});
+const STK=[]; for(let i=0;i<(lowEnd?50:100);i++) STK.push({x:Math.random(),y:Math.random(),l:10+Math.random()*26,v:.9+Math.random()*1.3,a:.06+Math.random()*.16});
+const DRP=[], MET=[];
+function shower(n){ const cnt=RM?3:([0,14,26,56][n]||14); for(let i=0;i<cnt;i++) MET.push({x:fw*(.2+Math.random()*1.1),y:-60-Math.random()*fh*.3,vx:-(380+Math.random()*300),vy:520+Math.random()*320,d:Math.random()*(1+n*1.6),l:90+Math.random()*150}); }
+function lens(d,al){ const gl=renderer.domElement, pr=d.r, sr=pr*1.9;
+  g2.save(); g2.beginPath(); g2.arc(d.x,d.y,pr,0,6.283); g2.clip(); g2.translate(d.x,d.y); g2.scale(-1,-1); g2.globalAlpha=al;
+  try{ g2.drawImage(gl,(d.x-sr)*fdpr,(d.y-sr)*fdpr,sr*2*fdpr,sr*2*fdpr,-pr,-pr,pr*2,pr*2); }catch(e){} g2.restore();
+  g2.globalAlpha=al; g2.lineWidth=1; g2.strokeStyle='rgba(255,235,225,.38)'; g2.beginPath(); g2.arc(d.x,d.y,pr,0,6.283); g2.stroke();
+  g2.fillStyle='rgba(255,255,255,.7)'; g2.beginPath(); g2.arc(d.x-pr*.35,d.y-pr*.38,Math.max(.8,pr*.16),0,6.283); g2.fill(); g2.globalAlpha=1; }
+function draw2d(dt){
+  const rainOn=S.rain&&!RM, flyOn=S.fly;
+  if(!flyOn&&!rainOn&&!MET.length&&!HOLK){ if(dirty2){ g2.setTransform(1,0,0,1,0,0); g2.clearRect(0,0,c2.width,c2.height); dirty2=false; } return; }
+  dirty2=true; g2.setTransform(fdpr,0,0,fdpr,0,0); g2.clearRect(0,0,fw,fh); const t=uTime.value;
+  if(rainOn){ g2.globalCompositeOperation='source-over'; g2.strokeStyle='rgb(255,225,220)'; g2.lineWidth=1;
+    STK.forEach(r=>{ r.y+=r.v*dt*.9; r.x-=r.v*dt*.05; if(r.y>1.05){ r.y=-.05; r.x=Math.random()*1.1; } const px=r.x*fw, py=r.y*fh; g2.globalAlpha=r.a; g2.beginPath(); g2.moveTo(px,py); g2.lineTo(px-r.l*.12,py-r.l); g2.stroke(); }); g2.globalAlpha=1;
+    if(DRP.length<(lowEnd?9:16)&&Math.random()<dt*3) DRP.push({x:Math.random()*fw,y:Math.random()*fh*.85,r:3+Math.random()*6,v:0,t:0,y0:0,mv:0});
+    for(let i=DRP.length-1;i>=0;i--){ const d=DRP[i]; if(d.t===0) d.y0=d.y; d.t+=dt;
+      if(d.mv<=0&&Math.random()<dt*.3*(d.r/6)) d.mv=.35+Math.random()*.7; if(d.mv>0){ d.v=26+d.r*9; d.mv-=dt; } else d.v*=.85; d.y+=d.v*dt;
+      const al=Math.min(1,d.t*1.5)*(d.t>30?Math.max(0,(36-d.t)/6):1);
+      if(d.y>d.y0+2){ g2.globalAlpha=al*.16; g2.strokeStyle='rgb(255,235,230)'; g2.lineWidth=Math.max(1,d.r*.45); g2.beginPath(); g2.moveTo(d.x,d.y0); g2.lineTo(d.x,d.y); g2.stroke(); }
+      lens(d,al); if(d.y>fh+20||d.t>36) DRP.splice(i,1); } g2.globalAlpha=1; }
+  g2.globalCompositeOperation='lighter';
+  if(flyOn){ const q=RM?dt*.2:dt;
+    FL.forEach(f=>{ f.a+=(Math.sin(t*.7+f.p)+Math.sin(t*1.3+f.p*2))*.9*q; let px=f.x*fw, py=f.y*fh; const dx=mx-px, dy=my-py, d=Math.hypot(dx,dy);
+      if(d<170&&d>26){ let da=Math.atan2(dy,dx)-f.a; da=Math.atan2(Math.sin(da),Math.cos(da)); f.a+=da*q*1.2; }
+      f.x+=Math.cos(f.a)*f.s*q*fh/fw; f.y+=Math.sin(f.a)*f.s*q; if(f.x<-.03) f.x=1.03; else if(f.x>1.03) f.x=-.03; if(f.y<-.03) f.y=1.03; else if(f.y>1.03) f.y=-.03;
+      px=f.x*fw; py=f.y*fh; const b=.2+.8*Math.pow(.5+.5*Math.sin(t*.8+f.p*3),2), R=f.r*9, gr=g2.createRadialGradient(px,py,0,px,py,R);
+      gr.addColorStop(0,'rgba('+FLC+','+(.5*b)+')'); gr.addColorStop(1,'rgba('+FLC+',0)'); g2.fillStyle=gr; g2.beginPath(); g2.arc(px,py,R,0,6.283); g2.fill();
+      g2.fillStyle='rgba(255,246,220,'+(.8*b)+')'; g2.beginPath(); g2.arc(px,py,f.r*.7,0,6.283); g2.fill(); });
+    if(t>nextMet){ nextMet=t+25+Math.random()*35; shower(0); MET.push({x:fw*(.4+Math.random()*.7),y:-40,vx:-420,vy:560,d:0,l:150}); } }
+  if(HOLK){ const hc=HOLC[HOLK]; if(!HP.length) for(let i=0;i<(lowEnd?20:38);i++) HP.push({x:Math.random(),y:Math.random(),v:.025+Math.random()*.05,p:Math.random()*6.283,r:7+Math.random()*13});
+    g2.textAlign='center'; g2.textBaseline='middle';
+    HP.forEach(h=>{ h.y+=(HOLK==='val'?-h.v:h.v)*dt*(RM?.3:1); if(h.y>1.06) h.y=-.06; else if(h.y<-.06) h.y=1.06;
+      g2.globalAlpha=.25+.35*(.5+.5*Math.sin(t*1.3+h.p)); g2.fillStyle='rgb('+hc[1]+')'; g2.font=Math.round(h.r*(HOLK==='ny'?1.2:2))+'px serif'; g2.fillText(hc[0],(h.x+Math.sin(t*.5+h.p)*.025)*fw,h.y*fh); });
+    g2.globalAlpha=1; }
+  for(let i=MET.length-1;i>=0;i--){ const m=MET[i]; if(m.d>0){ m.d-=dt; continue; } m.x+=m.vx*dt; m.y+=m.vy*dt;
+    const sp=Math.hypot(m.vx,m.vy), tx=m.x-m.vx/sp*m.l, ty=m.y-m.vy/sp*m.l, gr=g2.createLinearGradient(m.x,m.y,tx,ty);
+    gr.addColorStop(0,'rgba(255,244,220,.95)'); gr.addColorStop(.3,'rgba('+FLC+',.45)'); gr.addColorStop(1,'rgba('+FLC+',0)');
+    g2.strokeStyle=gr; g2.lineWidth=1.7; g2.beginPath(); g2.moveTo(m.x,m.y); g2.lineTo(tx,ty); g2.stroke();
+    g2.fillStyle='rgba(255,240,210,.9)'; g2.beginPath(); g2.arc(m.x,m.y,1.8,0,6.283); g2.fill();
+    if(m.y>fh+m.l||m.x<-m.l*2) MET.splice(i,1); }
+  g2.globalCompositeOperation='source-over';
+}
+const fx={ok:false};
+function fxResize(){ if(!fx.ok) return; const w=renderer.domElement.width,h=renderer.domElement.height;
+  fx.rs.setSize(w,h); const hw=Math.max(2,w>>1),hh=Math.max(2,h>>1),qw=Math.max(2,w>>2),qh=Math.max(2,h>>2);
+  fx.h1.setSize(hw,hh); fx.h2.setSize(hw,hh); fx.q1.setSize(qw,qh); fx.q2.setSize(qw,qh); fx.cm.uniforms.uR.value.set(w,h); }
+function fxBlur(src,dst,dx,dy){ fx.bm.uniforms.t.value=src.texture; fx.bm.uniforms.d.value.set(dx/src.width,dy/src.height); fx.quad.material=fx.bm; renderer.setRenderTarget(dst); renderer.render(fx.sc,fx.cam); }
+function fxRender(){
+  if(!fx.ok){ renderer.render(scene,camera); return; }
+  renderer.setRenderTarget(fx.rs); renderer.render(scene,camera);
+  fxBlur(fx.rs,fx.h1,1,0); fxBlur(fx.h1,fx.h2,0,1); fxBlur(fx.h2,fx.q1,1,0); fxBlur(fx.q1,fx.q2,0,1);
+  eul.setFromQuaternion(userQ,'YXZ'); fx.cm.uniforms.uOff.value.set(eul.y*.12,-eul.x*.12);
+  fx.quad.material=fx.cm; renderer.setRenderTarget(null); renderer.render(fx.sc,fx.cam);
+}
+try{
+  const ext=renderer.capabilities.isWebGL2&&(renderer.extensions.get('EXT_color_buffer_float')||renderer.extensions.get('EXT_color_buffer_half_float'));
+  const o={minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter,format:THREE.RGBAFormat,type:ext?THREE.HalfFloatType:THREE.UnsignedByteType,depthBuffer:false,stencilBuffer:false};
+  ['rs','h1','h2','q1','q2'].forEach(n=>{ fx[n]=new THREE.WebGLRenderTarget(4,4,o); disposables.push(fx[n]); });
+  const VS='varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}';
+  fx.bm=new THREE.ShaderMaterial({uniforms:{t:{value:null},d:{value:new THREE.Vector2()}},vertexShader:VS,depthTest:false,depthWrite:false,
+    fragmentShader:'uniform sampler2D t;uniform vec2 d;varying vec2 vUv;void main(){vec2 a=d*1.3846,b=d*3.2308;vec3 s=texture2D(t,vUv).rgb*.227;s+=(texture2D(t,vUv+a).rgb+texture2D(t,vUv-a).rgb)*.3162+(texture2D(t,vUv+b).rgb+texture2D(t,vUv-b).rgb)*.0703;gl_FragColor=vec4(s,1.);}'});
+  fx.cm=new THREE.ShaderMaterial({uniforms:{tS:{value:fx.rs.texture},tH:{value:fx.h2.texture},tQ:{value:fx.q2.texture},uT:uTime,uR:{value:new THREE.Vector2(1,1)},uOff:{value:new THREE.Vector2()},uBloom:{value:lowEnd?.8:1},uA:{value:new THREE.Vector3()},uB:{value:new THREE.Vector3()},uN1:{value:new THREE.Vector3()},uN2:{value:new THREE.Vector3()},uN3:{value:new THREE.Vector3()},uGlow:{value:0}},vertexShader:VS,depthTest:false,depthWrite:false,
+    fragmentShader:`uniform sampler2D tS,tH,tQ;uniform float uT,uBloom,uGlow;uniform vec2 uR,uOff;uniform vec3 uA,uB,uN1,uN2,uN3;varying vec2 vUv;
+float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
+float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<4;i++){s+=a*vn(p);p=p*2.03+vec2(17.1,9.2);a*=.5;}return s;}
+void main(){
+  vec2 uv=vUv,c=uv-.5; float ab=dot(c,c)*.004;
+  vec3 s=vec3(texture2D(tS,uv+c*ab).r,texture2D(tS,uv).g,texture2D(tS,uv-c*ab).b);
+  vec3 b=texture2D(tH,uv).rgb*.55+texture2D(tQ,uv).rgb*.95;
+  vec2 q=c*vec2(uR.x/uR.y,1.)*1.7+uOff;
+  float n1=fbm(q*1.3+vec2(uT*.006,0.)),n2=fbm(q*2.6-n1*.8+vec2(0.,uT*.004));
+  float r=length(c*vec2(1.,.9));
+  vec3 base=mix(uA,uB,smoothstep(0.,.8,r));
+  vec3 neb=uN1*smoothstep(.35,.85,n1)*.4+uN2*smoothstep(.4,.9,n2)*.22+uN3*pow(smoothstep(.55,.95,n1*n2*1.9),2.)*.15;
+  vec3 col=base+neb*(1.-smoothstep(.2,.95,r)*.6)+s+b*uBloom; col+=vec3(.55,.2,.12)*uGlow*smoothstep(.1,-.55,c.y)*.45;
+  col=(col*(2.51*col+.03))/(col*(2.43*col+.59)+.14); col=clamp(col,0.,1.);
+  col*=.55+.45*smoothstep(1.05,.35,length(c*vec2(1.1,1.)));
+  col+=(h(uv*uR+fract(uT))-.5)*.022;
+  gl_FragColor=vec4(col,1.);}`});
+  fx.quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),fx.bm); fx.quad.frustumCulled=false; fx.sc=new THREE.Scene(); fx.sc.add(fx.quad); fx.cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+  disposables.push(fx.bm,fx.cm,fx.quad.geometry); fx.ok=true;
+}catch(e){ fx.ok=false; console.warn('fx off',e); }
+fit=computeFit(); dist=fit*2; resize();
+dist=fit*2;
+function minD(){ return 3.5; } function maxD(){ return fit*2.4; }
+let resizeT=0; function onResize(){ clearTimeout(resizeT); resizeT=setTimeout(resize,60); }
+on(window,'resize',onResize); on(window,'orientationchange',()=>setTimeout(resize,250));
+
+function tweenTo(o){
+  const dur = (o.dur||1.2)*(RM?0.25:1);
+  tw={t:0,dur,q0:userQ.clone(),q1:o.q?o.q.clone():null,d0:dist,d1:o.dist==null?null:o.dist,s0:shift,s1:o.shift==null?null:o.shift,done:o.done||null};
+  vYaw=vPitch=0;
+}
+function rotateBy(yaw,pitch){ qa.setFromAxisAngle(AY,yaw); qb.setFromAxisAngle(AX,pitch); userQ.premultiply(qb).premultiply(qa).normalize(); }
+
+/* ---------- звук ---------- */
+let actx=null;
+function audioInit(){
+  if(actx){ if(actx.state==='suspended') actx.resume().catch(()=>{}); return; }
+  try{ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); }catch(e){ actx=null; }
+  if(actx) buildAudio();
+}
+function note(f,at,dur,vol,type){
+  if(!actx) return; const t=actx.currentTime+at, o=actx.createOscillator(), g=actx.createGain();
+  o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+.03); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(bus||actx.destination); o.start(t); o.stop(t+dur+.05);
+}
+let bus=null, padG=null;
+function buildAudio(){ try{
+  bus=actx.createGain(); const dry=actx.createGain(); dry.gain.value=.8; const wet=actx.createGain(); wet.gain.value=.55;
+  const len=actx.sampleRate*3, ir=actx.createBuffer(2,len,actx.sampleRate);
+  for(let c=0;c<2;c++){ const d=ir.getChannelData(c); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6); }
+  const cv=actx.createConvolver(); cv.buffer=ir; bus.connect(dry); bus.connect(cv); cv.connect(wet); dry.connect(actx.destination); wet.connect(actx.destination);
+  padG=actx.createGain(); padG.gain.value=0; const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=700; padG.connect(lp); lp.connect(actx.destination); lp.connect(cv);
+  [110,164.81,220,277.18,329.63].forEach((f,i)=>{ const o=actx.createOscillator(); o.type=i%2?'triangle':'sine'; o.frequency.value=f; o.detune.value=(i-2)*5;
+    const lf=actx.createOscillator(), lg=actx.createGain(); lf.frequency.value=.05+i*.03; lg.gain.value=3; lf.connect(lg); lg.connect(o.detune);
+    const og=actx.createGain(); og.gain.value=.2; o.connect(og); og.connect(padG); o.start(); lf.start(); });
+ }catch(e){ bus=null; } padSync(); }
+function padSync(){ if(padG&&actx) padG.gain.setTargetAtTime(S.sound?.05:0,actx.currentTime,1.8); }
+const SCL=[523.25,587.33,659.25,783.99,880,1046.5,1174.66];
+function sfxOpen(soft){ if(!S.sound||!actx) return; const f=SCL[(Math.random()*SCL.length)|0], v=soft?.5:1;
+  note(f,0,1.7,.05*v); note(f*1.5,.07,1.5,.025*v); note(f*2,.14,1.3,.014*v); }
+function sfxTick(){ if(!S.sound||!actx) return; note(1800+Math.random()*500,0,.03,.0035,'square'); }
+function sfxMilestone(){ if(!S.sound||!actx) return; [523.25,659.25,783.99,1046.5].forEach((f,i)=>note(f,i*.12,1.8,.04)); }
+function sfxFinale(){ if(!S.sound||!actx) return;
+  [392,523.25,659.25,783.99,1046.5,1318.5,1568].forEach((f,i)=>note(f,i*.45,2.6,.045));
+  [261.63,329.63,392].forEach(f=>note(f,3,5,.03)); }
+
+/* ---------- интерфейс ---------- */
+const ui={hud:$('#hud'),controls:$('#controls'),hint:$('#hint'),panel:$('#panel'),final:$('#final'),drawer:$('#drawer'),intro:$('#intro'),skip:$('#skip')};
+function vis(el,onn){ el.classList.toggle('off',!onn); el.classList.toggle('on',!!onn); }
+function setUI(mode){
+  vis(ui.intro,mode==='intro'); vis(ui.hud,mode==='explore'||mode==='panel');
+  vis(ui.controls,mode==='explore'); vis(ui.panel,mode==='panel'); vis(ui.final,mode==='final');
+  ui.skip.hidden = mode!=='finale'; vis(ui.skip,mode==='finale');
+  if(mode!=='explore') vis(ui.hint,false);
+}
+splitTitle($('#iTitle'),DATA.title); $('#iSub').textContent=DATA.subtitle; $('#start').textContent=DATA.startLabel;
+ui.hint.textContent = COARSE ? DATA.hintTouch : DATA.hintMouse;
+let ticks=null;
+function ringSync(n){
+  const ring=$('#ring');
+  if(!ticks){ ticks=[]; for(let i=0;i<100;i++){ const a=i/100*Math.PI*2-Math.PI/2, r1=i%10===0?21:23.2, l=document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',28+Math.cos(a)*r1); l.setAttribute('y1',28+Math.sin(a)*r1); l.setAttribute('x2',28+Math.cos(a)*26.5); l.setAttribute('y2',28+Math.sin(a)*26.5); ring.appendChild(l); ticks.push(l); } }
+  ticks.forEach((l,i)=>l.classList.toggle('lit',openedSet.has(i))); $('#rnum').textContent=n;
+}
+function updateProgress(){
+  const n=openedSet.size;
+  $('#ptext').textContent='Открыто '+n+' из 100 причин';
+  $('#pbar').style.width=n+'%'; ringSync(n);
+  $('#bFinale').hidden = n<100;
+  const sv=$('#iSaved'); sv.hidden = n===0; if(n) sv.textContent='Прогресс сохранён: открыто '+n+' из 100';
+}
+let toastT=0;
+function toast(msg,sub){
+  const t=$('#toast'); t.querySelector('.t1').textContent=msg;
+  const s=t.querySelector('.t2'); if(sub){ s.textContent=sub; s.hidden=false; } else s.hidden=true;
+  t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),RM?4500:6800);
+}
+function updateSoundBtn(){ const b=$('#bSound'); b.setAttribute('aria-pressed',S.sound?'true':'false'); b.title=b.ariaLabel=S.sound?'Звук включён':'Звук выключен'; b.setAttribute('aria-label',b.title); }
+updateSoundBtn(); updateProgress();
+
+/* ---------- звёзды: состояние ---------- */
+function applyStarStates(instantVis){
+  for(let k=0;k<100;k++) aStA[k]=openedSet.has(reasonOfStar[k])?1:0;
+  for(let j=0;j<N_SEC;j++){ const k=100+j; aStA[k]=S.secrets.indexOf(j)>=0?1:0; visTarget[k]=openedSet.size>=SEC_AT[j]?1:0; if(instantVis) aVisA[k]=visTarget[k]; }
+  for(let k=0;k<100;k++){ visTarget[k]=1; aVisA[k]=1; }
+  for(let j=0;j<N_HER;j++){ const k=103+j, on_=j<S.mine.length?1:0; aStA[k]=on_; visTarget[k]=on_; aVisA[k]=on_; }
+  starGeo.attributes.aState.needsUpdate=true; starGeo.attributes.aVis.needsUpdate=true;
+}
+function doFlash(k,v){ flash[k]=Math.max(flash[k],v==null?1:v); }
+
+function showReason(r){
+  const k=starOfReason[r], isNew=!openedSet.has(r);
+  curStar={k,secret:false,r};
+  if(isNew){
+    openedSet.add(r); S.opened.push(r); aStA[k]=1; starGeo.attributes.aState.needsUpdate=true;
+    doFlash(k,1); burst(k); addEdgesFor(k,false); sfxOpen(false); buzz(PAT[Math.floor(r/10)]); updateProgress(); checkMilestones(); save();
+  } else { doFlash(k,.7); sfxOpen(true); }
+  const d=DATA.reasons[r];
+  $('#pNum').textContent='Причина '+(r+1)+' из 100';
+  $('#pChap').textContent='Глава '+(Math.floor(r/10)+1)+' · '+DATA.chapters[Math.floor(r/10)];
+  $('#pTitle').textContent=d[0]; revealWords($('#pText'),d[1]);
+  setPhoto(DATA.photos[r+1]);
+  updateNextLabel(); openPanel(k);
+}
+function showSecret(j){
+  const k=100+j; curStar={k,secret:true,r:-1};
+  if(S.secrets.indexOf(j)<0){ S.secrets.push(j); aStA[k]=1; starGeo.attributes.aState.needsUpdate=true; burst(k); save(); }
+  doFlash(k,1); sfxOpen(false);
+  const d=DATA.secrets[j];
+  $('#pNum').textContent='Тайная звезда '+(j+1)+' из 3'; $('#pChap').textContent='Скрытое послание';
+  $('#pTitle').textContent=d[0]; revealWords($('#pText'),d[1]); setPhoto(null);
+  updateNextLabel(); openPanel(k);
+}
+function setPhoto(src){
+  const box=$('#pPhoto'), img=box.querySelector('img'); box.hidden=true; img.onload=null; img.onerror=null; img.removeAttribute('src');
+  if(!src) return;
+  img.onload=()=>{ box.hidden=false; if(state==='panel') shift=ui.panel.offsetHeight/2+4; };
+  img.onerror=()=>{ box.hidden=true; }; img.src=src;
+}
+function updateNextLabel(){ $('#pNext').textContent = pendingFinale ? 'Смотреть финал' : 'Следующая звезда'; panelTools(); }
+function nextReasonFrom(r){ for(let i=1;i<=100;i++){ const c=(((r+i)%100)+100)%100; if(!openedSet.has(c)) return c; } return (((r+1)%100)+100)%100; }
+function checkMilestones(){
+  const n=openedSet.size;
+  if([25,50,75,100].indexOf(n)>=0 && S.ms.indexOf(n)<0){
+    S.ms.push(n); sfxMilestone(); buzz([20,80,20,80,40]); shower(n===100?3:1);
+    const idx=SEC_AT.indexOf(n);
+    if(idx>=0){ visTarget[100+idx]=1; setTimeout(()=>doFlash(100+idx,1),900); toast(DATA.milestones[n],'Где-то в стороне загорелась тайная звезда — попробуй отдалить камеру.'); }
+    else toast(DATA.milestones[n]);
+    if(n===100){ pendingFinale=true; }
+  }
+}
+
+/* ---------- панель ---------- */
+function openPanel(k){
+  if(state==='explore' || !prevView){ if(!prevView) prevView={q:userQ.clone(),dist}; }
+  state='panel'; setUI('panel'); canvas.style.cursor='default';
+  const p=new THREE.Vector3(P[k*3],P[k*3+1],P[k*3+2]), len=p.length();
+  const qA = len>.05 ? new THREE.Quaternion().setFromUnitVectors(p.clone().normalize(),AZ) : userQ.clone();
+  const h=ui.panel.offsetHeight;
+  tweenTo({q:qA,dist:Math.max(len+6,9),shift:h/2+4,dur:1.3});
+}
+function closePanel(goHome){
+  if(state!=='panel') return;
+  state='explore'; setUI('explore');
+  if(pendingFinale){ pendingFinale=false; prevView=null; setTimeout(startFinale,RM?200:800); tweenTo({q:FRONT_Q,dist:fit*1.1,shift:0,dur:1.2}); return; }
+  if(goHome){ tweenTo({q:DEF_Q,dist:fit,shift:0,dur:1.6}); }
+  else if(prevView){ tweenTo({q:prevView.q,dist:prevView.dist,shift:0,dur:1.2}); }
+  else tweenTo({shift:0,dur:.8});
+  prevView=null; curStar=null;
+}
+on($('#pClose'),'click',()=>closePanel(false));
+on($('#pBack'),'click',()=>closePanel(true));
+on($('#pNext'),'click',()=>{
+  audioInit();
+  if(pendingFinale){ closePanel(false); return; }
+  showReason(nextReasonFrom(curStar?curStar.r:-1));
+});
+
+/* ---------- выбор звезды ---------- */
+const tv=new THREE.Vector3();
+function pick(cx,cy){
+  world.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+  const base=COARSE?34:22; let best=-1,bs=1e9;
+  for(let k=0;k<N;k++){
+    if(aVisA[k]<.6) continue;
+    tv.set(P[k*3],P[k*3+1],P[k*3+2]).applyMatrix4(world.matrixWorld).project(camera);
+    if(tv.z>1||tv.z<-1) continue;
+    const sx=(tv.x*.5+.5)*W, sy=(-tv.y*.5+.5)*H, d=Math.hypot(sx-cx,sy-cy), rad=base+aSizeA[k]*14;
+    if(d<rad){ const sc=d+tv.z*3; if(sc<bs){bs=sc;best=k;} }
+  }
+  return best;
+}
+function activate(k){ if(k>=103) showMine(k-103); else if(k>=100) showSecret(k-100); else showReason(reasonOfStar[k]); }
+
+/* ---------- жесты ---------- */
+const ptrs=new Map(); let gst=null, pinchD0=1, pinchDist0=1;
+function stagePos(e){ const r=canvas.getBoundingClientRect(); return [e.clientX-r.left,e.clientY-r.top]; }
+on(canvas,'pointerdown',e=>{
+  if(state!=='explore'&&state!=='panel') return;
+  if(e.pointerType==='mouse'&&e.button!==0) return;
+  try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===1){ gst={sx:e.clientX,sy:e.clientY,t0:performance.now(),moved:false,multi:false}; vYaw=vPitch=0; if(state==='explore') tw=null; }
+  else if(gst){ gst.multi=true; const a=[...ptrs.values()]; pinchD0=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1; pinchDist0=dist; if(state==='explore') tw=null; }
+  ui.hint.classList.contains('on') && (hintHideSoon());
+});
+on(canvas,'pointermove',e=>{
+  const p=ptrs.get(e.pointerId);
+  if(!p){ if(e.pointerType==='mouse'&&state==='explore'&&!ptrs.size){ const q=stagePos(e); const kk=pick(q[0],q[1]); canvas.style.cursor=kk>=0?'pointer':'grab'; setReticle(kk); } return; }
+  const dx=e.clientX-p.x, dy=e.clientY-p.y; p.x=e.clientX; p.y=e.clientY;
+  if(gst && !gst.moved && Math.hypot(e.clientX-gst.sx,e.clientY-gst.sy)>7) gst.moved=true;
+  if(state!=='explore') return;
+  if(ptrs.size>=2){ const a=[...ptrs.values()], d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1; dist=clamp(pinchDist0*pinchD0/d,minD(),maxD()); if(gst) gst.moved=true; return; }
+  if(harp&&gst){ strum(e); return; }
+  if(!gst || !gst.moved) return;
+  const K=.0058, yaw=dx*K, pitch=dy*K; rotateBy(yaw,pitch);
+  const now=e.timeStamp||performance.now(), dt=Math.max(.008,(now-(lastMoveT||now-16))/1000); lastMoveT=now;
+  vYaw=clamp(lerp(vYaw,yaw/dt,.4),-3.2,3.2); vPitch=clamp(lerp(vPitch,pitch/dt,.4),-3.2,3.2);
+});
+function endPtr(e,cancel){
+  if(!ptrs.has(e.pointerId)) return; ptrs.delete(e.pointerId);
+  try{ canvas.releasePointerCapture(e.pointerId); }catch(_){}
+  if(ptrs.size===0 && gst){
+    const g=gst; gst=null;
+    const tap=!cancel && !g.moved && !g.multi && performance.now()-g.t0<700;
+    if(performance.now()-lastMoveT>90 || RM) vYaw=vPitch=0;
+    if(tap){
+      audioInit();
+      if(state==='panel'){ closePanel(false); }
+      else if(state==='explore'){ const q=stagePos(e), k=pick(q[0],q[1]); if(k>=0){ if(harp) pluck(k); else activate(k); } }
+    }
+  }
+}
+on(canvas,'pointerup',e=>endPtr(e,false));
+on(canvas,'pointercancel',e=>{ endPtr(e,true); vYaw=vPitch=0; });
+on(canvas,'wheel',e=>{
+  if(state!=='explore') return; e.preventDefault(); tw=null;
+  let d=e.deltaY; if(e.deltaMode===1) d*=16; else if(e.deltaMode===2) d*=100;
+  dist=clamp(dist*Math.exp(d*.0012),minD(),maxD());
+},{passive:false});
+on(canvas,'contextmenu',e=>e.preventDefault());
+on(document,'gesturestart',e=>e.preventDefault());
+on(window,'keydown',e=>{
+  if(e.key==='Escape'){ for(const id of ['#mMine','#mGuide','#mMenu']) if(!$(id).hidden){ $(id).hidden=true; return; } if(!$('#mImg').hidden) closeImg(); else if(!$('#mReset').hidden) $('#mReset').hidden=true; else if(ui.drawer.classList.contains('on')) closeDrawer(); else if(state==='panel') closePanel(false); }
+});
+
+/* ---------- HUD: прицел, телеметрия, текстовые эффекты ---------- */
+const ret=$('#reticle'), rlab=$('#rlab'), tAz=$('#tAz'), tEl=$('#tEl'), tZm=$('#tZm'); let retK=-1, hf=0;
+function setReticle(k){
+  if(k===retK) return; retK=COARSE?-1:k;
+  if(retK<0){ ret.classList.remove('on'); return; }
+  if(k>=103) rlab.textContent=S.mine[k-103]?(S.mine[k-103].t||'Твоя звезда'):''; else if(k>=100) rlab.textContent='Тайная звезда';
+  else { const r=reasonOfStar[k]; rlab.textContent=openedSet.has(r)?DATA.reasons[r][0]:'Глава «'+DATA.chapters[Math.floor(r/10)]+'»'; }
+  ret.classList.add('on');
+}
+function hudTick(){
+  if(retK>=0){ if(state!=='explore') setReticle(-1);
+    else { tv.set(P[retK*3],P[retK*3+1],P[retK*3+2]).applyMatrix4(world.matrixWorld).project(camera); ret.style.transform='translate('+((tv.x*.5+.5)*W)+'px,'+((-tv.y*.5+.5)*H)+'px)'; } }
+  if((hf++&3)===0){ eul.setFromQuaternion(userQ,'YXZ'); tAz.textContent=((eul.y*57.2958%360+360)%360).toFixed(1)+'°'; tEl.textContent=(eul.x*57.2958).toFixed(1)+'°'; tZm.textContent=(fit/dist).toFixed(2)+'×'; }
+  figTick();
+}
+let typeTok=0;
+function revealWords(el,text){
+  const tok=++typeTok; el.textContent=''; el.setAttribute('aria-label',text); const chars=[];
+  text.split(/(\s+)/).forEach(w=>{ if(!w) return; if(!w.trim()){ el.appendChild(document.createTextNode(w)); return; }
+    const wd=document.createElement('span'); wd.className='wd2'; for(const ch of w){ const c=document.createElement('span'); c.className='tc'; c.textContent=ch; wd.appendChild(c); chars.push(c); } el.appendChild(wd); });
+  if(RM){ chars.forEach(c=>c.classList.add('on')); return; }
+  let i=0, cur=null;
+  el.onclick=()=>{ typeTok++; chars.forEach(c=>c.classList.add('on')); if(cur) cur.classList.remove('cur'); };
+  (function go(){ if(tok!==typeTok) return; if(cur) cur.classList.remove('cur'); if(i>=chars.length) return;
+    const c=chars[i++]; c.classList.add('on','cur'); cur=c; if(i%2===0) sfxTick();
+    const ch=c.textContent, p=/[.!?]/.test(ch)?260:/[,;:—]/.test(ch)?130:0; setTimeout(go,22+Math.random()*22+p); })();
+}
+function splitTitle(el,text){
+  el.textContent=''; el.setAttribute('aria-label',text); let n=0;
+  text.split(' ').forEach((word,wi,arr)=>{ const wd=document.createElement('span'); wd.className='wd'; wd.setAttribute('aria-hidden','true');
+    for(const chr of word){ const c=document.createElement('span'); c.className='ch'; c.textContent=chr; c.style.animationDelay=(.3+n++*.045)+'s'; wd.appendChild(c); }
+    el.appendChild(wd); if(wi<arr.length-1) el.appendChild(document.createTextNode(' ')); });
+}
+
+/* ---------- вибрация, закладки, поделиться, её звёзды, меню, инструкция ---------- */
+const PAT=[[12],[10,40,16],[8,30,8,30,14],[18,60,18],[6,24,6,24,6,24,12],[14,50,24],[10,30,30],[20],[8,40,8,40,20],[12,60,12,60,12]];
+function buzz(p){ if(S.vib&&navigator.vibrate){ try{ navigator.vibrate(p); }catch(e){} } }
+let favOnly=false;
+function buildFav(){ buildList(); if(favOnly&&!$('#dList').children.length) $('#dList').innerHTML='<p class="muted">Пока нет закладок. Нажми «♡ В закладки» в карточке причины.</p>'; }
+function syncChips(){ $('#cAll').classList.toggle('on',!favOnly); $('#cFav').classList.toggle('on',favOnly); }
+on($('#cAll'),'click',()=>{ favOnly=false; syncChips(); buildFav(); });
+on($('#cFav'),'click',()=>{ favOnly=true; syncChips(); buildFav(); });
+function panelTools(){ const c=curStar||{}, isR=c.r>=0, f=$('#pFav'); f.hidden=!isR; $('#pDel').hidden=c.mine==null;
+  if(isR){ const on_=S.fav.indexOf(c.r)>=0; f.setAttribute('aria-pressed',on_?'true':'false'); f.textContent=on_?'♥ В закладках':'♡ В закладки'; } }
+on($('#pFav'),'click',()=>{ const r=curStar&&curStar.r; if(r==null||r<0) return; const i=S.fav.indexOf(r); if(i>=0) S.fav.splice(i,1); else { S.fav.push(r); buzz([14,40,14]); sfxOpen(true); } save(); panelTools(); });
+function showMine(j){ const m=S.mine[j]; if(!m) return; const k=103+j; curStar={k,secret:true,mine:j,r:-1}; doFlash(k,1); sfxOpen(false); buzz([16,50,16]);
+  $('#pNum').textContent='Твоя звезда '+(j+1); $('#pChap').textContent='Причина от тебя'; $('#pTitle').textContent=m.t||'Твоя причина'; revealWords($('#pText'),m.x); setPhoto(null); updateNextLabel(); openPanel(k); }
+function openMine(){ $('#mCount').textContent=$('#mText').value.length+' / 240'; $('#mMine').hidden=false; }
+on($('#mText'),'input',()=>{ $('#mCount').textContent=$('#mText').value.length+' / 240'; });
+on($('#fMine'),'click',openMine);
+on($('#mAdd'),'click',()=>{
+  const x=$('#mText').value.trim(), t=$('#mTitle').value.trim();
+  if(x.length<3){ toast('Напиши хотя бы пару слов.'); return; }
+  if(S.mine.length>=N_HER){ toast('Для твоих причин хватит '+N_HER+' звёзд.'); return; }
+  S.mine.push({t:t.slice(0,40),x:x.slice(0,240)}); const j=S.mine.length-1, k=103+j; aStA[k]=1; visTarget[k]=1; aVisA[k]=1;
+  starGeo.attributes.aState.needsUpdate=true; starGeo.attributes.aVis.needsUpdate=true; save(); $('#mText').value=''; $('#mTitle').value=''; $('#mMine').hidden=true;
+  if(state==='final'||state==='finale') leaveFinal(true); burst(k); doFlash(k,1); sfxMilestone(); setTimeout(()=>showMine(j),450); });
+on($('#mSend'),'click',async()=>{
+  if(!S.mine.length){ toast('Сначала зажги свою звезду.'); return; }
+  const text='Мои причины для тебя:\n\n'+S.mine.map((m,i)=>(i+1)+'. '+(m.t?m.t+' — ':'')+m.x).join('\n\n');
+  try{ if(navigator.share){ await navigator.share({title:'Мои причины',text}); return; } }catch(e){ if(e&&e.name==='AbortError') return; }
+  try{ await navigator.clipboard.writeText(text); toast('Скопировано. Вставь в сообщение и отправь.'); }catch(e){ toast('Не получилось скопировать. Сделай скриншот своих звёзд.'); } });
+on($('#pDel'),'click',()=>{ const j=curStar&&curStar.mine; if(j==null||!confirm('Удалить эту звезду?')) return; S.mine.splice(j,1); applyStarStates(true); save(); closePanel(true); });
+// меню
+function syncMenu(){ $('#tFly').checked=S.fly; $('#tRain').checked=S.rain; $('#tVib').checked=S.vib; document.querySelectorAll('.th').forEach(b=>b.classList.toggle('on',b.dataset.th===S.theme)); }
+on($('#bMenu'),'click',()=>{ syncMenu(); $('#mMenu').hidden=false; });
+on($('#tFly'),'change',e=>{ S.fly=e.target.checked; save(); }); on($('#tRain'),'change',e=>{ S.rain=e.target.checked; save(); });
+on($('#tVib'),'change',e=>{ S.vib=e.target.checked; save(); if(S.vib) buzz(30); });
+document.querySelectorAll('.th').forEach(b=>on(b,'click',()=>{ applyTheme(b.dataset.th); syncMenu(); }));
+document.querySelectorAll('[data-close]').forEach(b=>on(b,'click',()=>{ b.closest('.modal').hidden=true; }));
+['#mMenu','#mMine'].forEach(id=>on($(id),'pointerdown',e=>{ if(e.target===e.currentTarget) e.currentTarget.hidden=true; }));
+on($('#bShower'),'click',()=>{ $('#mMenu').hidden=true; shower(2); });
+on($('#bFavs'),'click',()=>{ $('#mMenu').hidden=true; openDrawer(true); });
+on($('#bMine'),'click',()=>{ $('#mMenu').hidden=true; openMine(); });
+on($('#bGuide'),'click',()=>{ $('#mMenu').hidden=true; openGuide(); });
+on($('#bReset'),'click',()=>{ $('#mMenu').hidden=true; });
+// инструкция
+const GUIDE=[
+ ['✦','Мяу, Карина!','Артём сейчас спит и не может всё объяснить сам, поэтому за него я: Мини-Артём, его друг и помощник. Я котик, так что без лишних слов: хвост трубой, и я покажу, как тут всё устроено.'],
+ ['☝','Вращай и приближай','Води пальцем по экрану, и созвездие повернётся. Двумя пальцами можно приблизить и отдалить. На компьютере работают мышь и колёсико. Потерялась? Нажми «Вернуть созвездие», я не обижусь.'],
+ ['❀','Спрятанные фигуры','Сердце — только один ракурс. Покрути созвездие по горизонтали: под другим углом звёзды сложатся в цветок, а ещё под одним в бабочку. Когда поймаешь нужный угол, вспыхнут линии и появится название. Лень искать? Кнопка «Фигуры» сама повернёт к следующей.'],
+ ['✧','Открывай звёзды','Каждая звезда — одна причина. Нажми на любую: она вспыхнет, и Артём расскажет, за что тебя любит. Текст печатается сам, а если нажать на него, появится сразу целиком.'],
+ ['♪','Звёздная арфа','Нажми «Арфа» внизу и води пальцем по звёздам: каждая звучит своей нотой из мягкой гаммы, и получается мелодия. А кнопка «Сыграть линии» заставит созвездие играть само: нота побежит по линиям от звезды к звезде. У сердца, цветка и бабочки мелодии разные. Попробуй все три, мур!'],
+ ['♡','Закладки','Кнопка «В закладки» сохраняет причину в избранное: все они лежат в «Меню → Мои закладки». Здесь только ты и Артём, так что ничего никому отправлять не нужно: все причины остаются у тебя.'],
+ ['☆','Тайные звёзды','Когда откроешь 25, 50 и 75 причин, где-то в стороне загорится тайная звезда. Отдали камеру и поищи, они прячутся за краем сердца.'],
+ ['☾','Живое небо','Приветствие зависит от времени суток («Доброй ночи, Карина»), а на небе висит настоящая луна в той фазе, которая сейчас за окном. На рассвете и закате небо теплеет. А в Новый год, 14 февраля и 8 марта появляются особые эффекты: звёздный снег, летящие сердечки и лепестки. Шестерёнка вверху открывает меню: тема неба, светлячки, дождь на стекле и звёздный дождь.'],
+ ['✎','Твоя очередь','Добавь свою звезду: напиши, за что ты любишь Артёма, и она загорится рядом с его звёздами. Потом нажми «Отправить Артёму», и он прочитает, когда проснётся. Я тоже подсмотрю, но никому не скажу.'],
+ ['☾','Пара мелочей','Прогресс хранится на этом устройстве, поэтому не очищай данные браузера. Включи звук (на iPhone выключи беззвучный режим) и надень наушники, так лучше. Если что-то заглючит, перезагрузи страницу: звёзды никуда не денутся. Не спеши, сто звёзд не убегут. Мур!']];
+let gi=0;
+function renderGuide(){ const g=GUIDE[gi]; $('#gG').textContent=g[0]; $('#gT').textContent=g[1]; $('#gX').textContent=g[2];
+  $('#gD').innerHTML=GUIDE.map((_,i)=>'<i'+(i===gi?' class="on"':'')+'></i>').join(''); $('#gPrev').style.visibility=gi?'visible':'hidden';
+  $('#gNext').textContent=gi===GUIDE.length-1?'Понятно, поехали':'Далее'; const b=$('#gBody'); b.classList.remove('in'); void b.offsetWidth; b.classList.add('in'); }
+function openGuide(){ gi=0; renderGuide(); $('#mGuide').hidden=false; }
+function closeGuide(){ $('#mGuide').hidden=true; if(!S.guide){ S.guide=true; save(); } setTimeout(holiday,900); }
+on($('#gPrev'),'click',()=>{ if(gi>0){ gi--; renderGuide(); } });
+on($('#gNext'),'click',()=>{ if(gi<GUIDE.length-1){ gi++; renderGuide(); } else closeGuide(); });
+on($('#gSkip'),'click',closeGuide); on($('#bHow'),'click',openGuide);
+
+/* ---------- арфа и фигуры ---------- */
+let harp=false, hpx=0, hpy=0; const lastP=new Float32Array(N), PENT=[0,2,4,7,9], figEl=$('#figLabel'), fa=[0,0,0]; let figBest=-1, figI=0;
+function pluck(k){ const now=performance.now(); if(now-lastP[k]<260) return; lastP[k]=now;
+  tv.set(P[k*3],P[k*3+1],P[k*3+2]).applyMatrix4(world.matrixWorld).project(camera);
+  const idx=clamp(Math.floor((tv.x*.5+.5)*15),0,14), f=220*Math.pow(2,(PENT[idx%5]+12*Math.floor(idx/5))/12);
+  doFlash(k,.9); burst(k,RM?2:6); if(S.sound&&actx){ note(f,0,2.2,.07,'triangle'); note(f*2,0,1.1,.022); note(f*3,.01,.6,.008); } buzz(8); }
+function strum(e){ world.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+  const dx=e.clientX-hpx, dy=e.clientY-hpy, d=Math.hypot(dx,dy), n=hpx?Math.min(12,Math.ceil(d/12)):1;
+  for(let i=1;i<=n;i++){ const k=pick(hpx+dx*i/n,hpy+dy*i/n); if(k>=0&&k<100) pluck(k); } hpx=e.clientX; hpy=e.clientY; }
+on(canvas,'pointerdown',e=>{ hpx=e.clientX; hpy=e.clientY; });
+function setHarp(v){ harp=v; $('#bHarp').setAttribute('aria-pressed',v?'true':'false'); $('#bPlay').hidden=!v; canvas.style.cursor=v?'crosshair':'grab'; if(!v) stopPlay(); }
+let playTok=0, playing=false;
+function stopPlay(){ playing=false; playTok++; $('#bPlay').textContent='Сыграть линии'; }
+function playLines(){
+  if(playing){ stopPlay(); return; }
+  audioInit(); const segs=[];
+  if(figBest>0) figSegs[figBest-1].forEach(q=>segs.push(q));
+  else if(edgeKeys.size) edgeKeys.forEach(q=>{ const a=q.split('-'); segs.push([+a[0],+a[1]]); });
+  else for(let i=0;i<N_OUT;i++) segs.push([i,(i+1)%N_OUT]);
+  let seq=[]; segs.forEach(q=>{ if(seq[seq.length-1]!==q[0]) seq.push(q[0]); seq.push(q[1]); }); seq=seq.slice(0,120);
+  const tok=++playTok; playing=true; $('#bPlay').textContent='Остановить'; let i=0;
+  (function step(){ if(tok!==playTok) return; if(i>=seq.length||!harp||state!=='explore'){ stopPlay(); return; } pluck(seq[i++]); setTimeout(step,i%8===0?330:170); })();
+}
+on($('#bPlay'),'click',playLines);
+on($('#bHarp'),'click',()=>{ setHarp(!harp); if(harp){ audioInit(); toast('Арфа: води пальцем по звёздам. А «Сыграть линии» запустит мелодию по линиям созвездия.'); } });
+on($('#bFig'),'click',()=>{ if(state!=='explore') return; figI=(figI+1)%3; setHarp(false);
+  tweenTo({q:new THREE.Quaternion().setFromEuler(new THREE.Euler(0,FIGS[figI].psi,0)),dist:fit,shift:0,dur:1.8}); });
+function angD(a,b){ const d=((a-b)%Math.PI+Math.PI)%Math.PI; return Math.min(d,Math.PI-d); }
+function figTick(){
+  eul.setFromQuaternion(userQ,'YXZ'); const yaw=eul.y, pit=Math.abs(eul.x); let bi=-1, bv=0;
+  for(let i=0;i<3;i++){ const a=clamp(1-angD(yaw,FIGS[i].psi)/.4,0,1)*clamp(1-pit/.55,0,1); fa[i]+=(a-fa[i])*.14; if(fa[i]>bv){ bv=fa[i]; bi=i; } if(i>0) figMat[i-1].uniforms.uAlpha.value=.6*fa[i]; }
+  const show=state==='explore'&&bv>.5; figEl.style.opacity=show?clamp((bv-.5)/.35,0,1):0;
+  if(show&&bi!==figBest){ figBest=bi; figEl.textContent='✦ '+FIGS[bi].n+' ✦'; if(bv>.8) buzz([10,30,14]); } if(!show&&bv<.3) figBest=-1;
+}
+
+/* ---------- подсказка ---------- */
+let hintT=0;
+function showHint(){ vis(ui.hint,true); clearTimeout(hintT); hintT=setTimeout(()=>vis(ui.hint,false),11000); }
+function hintHideSoon(){ clearTimeout(hintT); hintT=setTimeout(()=>vis(ui.hint,false),1800); }
+
+/* ---------- старт ---------- */
+on($('#start'),'click',()=>{
+  audioInit(); state='explore'; setUI('explore');
+  tweenTo({q:DEF_Q,dist:fit,shift:0,dur:2.8});
+  setTimeout(showHint,1500);
+  if(!S.guide) setTimeout(openGuide,900); else setTimeout(holiday,3600);
+});
+on($('#bHome'),'click',()=>{ if(state==='explore') tweenTo({q:DEF_Q,dist:fit,shift:0,dur:1.4}); });
+on($('#bZoom'),'click',()=>{ if(state==='explore') tweenTo({dist:fit*.58,dur:1.2}); });
+on($('#bSound'),'click',()=>{ S.sound=!S.sound; save(); updateSoundBtn(); padSync(); if(S.sound){ audioInit(); sfxOpen(true); } });
+on($('#bFinale'),'click',()=>{ audioInit(); if(state==='explore') startFinale(); });
+
+/* ---------- список причин ---------- */
+function buildList(){
+  const box=$('#dList'); box.textContent='';
+  $('#dSub').textContent='Открыто '+openedSet.size+' из 100. Нажми на открытую причину, чтобы прочитать её ещё раз.';
+  for(let c=0;c<10;c++){
+    const h=document.createElement('div'); h.className='chap'; h.textContent=(c+1)+' · '+DATA.chapters[c]; let hs=false;
+    for(let i=0;i<10;i++){ const r=c*10+i, op=openedSet.has(r); if(favOnly&&!(op&&S.fav.indexOf(r)>=0)) continue; if(!hs){ box.appendChild(h); hs=true; } const b=document.createElement('button'); b.className='row'+(op?'':' lock'); b.type='button';
+      const n=document.createElement('span'); n.className='n'; n.textContent=String(r+1);
+      const t=document.createElement('span'); t.textContent=op?(S.fav.indexOf(r)>=0?'♥ ':'')+DATA.reasons[r][0]:'ещё не открыта'; b.appendChild(n); b.appendChild(t);
+      if(op) b.onclick=()=>{ closeDrawer(); audioInit(); if(state==='final'||state==='finale') leaveFinal(true); setTimeout(()=>{ if(state==='explore'||state==='panel') showReason(r); },250); }; else b.disabled=true;
+      box.appendChild(b); }
+  }
+}
+function openDrawer(fav){ favOnly=fav===true; syncChips(); buildFav(); vis(ui.drawer,true); $('.sheet').scrollTop=0; }
+function closeDrawer(){ vis(ui.drawer,false); }
+on($('#bList'),'click',openDrawer); on($('#dClose'),'click',closeDrawer); on($('#fList'),'click',openDrawer);
+on(ui.drawer,'pointerdown',e=>{ if(e.target===ui.drawer) closeDrawer(); });
+
+/* ---------- сброс ---------- */
+on($('#bReset'),'click',()=>{ $('#mReset').hidden=false; $('#mrNo').focus(); });
+on($('#mrNo'),'click',()=>{ $('#mReset').hidden=true; });
+on($('#mrYes'),'click',()=>{
+  $('#mReset').hidden=true; const keep=S; S=defState(); ['mine','theme','fly','rain','vib','sound','guide','holi'].forEach(k=>{ S[k]=keep[k]; }); openedSet.clear(); save();
+  clearEdges(); setHeartInstant(false); pendingFinale=false; fin=null; curStar=null; prevView=null; flash.fill(0);
+  applyStarStates(true); for(let j=0;j<N_SEC;j++){ visTarget[100+j]=0; aVisA[100+j]=0; } starGeo.attributes.aVis.needsUpdate=true;
+  updateProgress(); updateSoundBtn(); setUI('explore'); state='explore';
+  tweenTo({q:DEF_Q,dist:fit,shift:0,dur:1.4}); toast('Все звёзды погасли. Можно начать заново.');
+});
+
+/* ---------- финал ---------- */
+function startFinale(){
+  if(openedSet.size<100) return;
+  if(state==='panel') { state='explore'; }
+  state='finale'; setUI('finale'); ui.skip.hidden=false; canvas.style.cursor='default'; closeDrawer();
+  const f=RM?.3:1;
+  fin={t:0,f,sched:[],waveStart:7.2*f,cardAt:9.6*f,card:false};
+  tweenTo({q:FRONT_Q,dist:fit*1.12,shift:0,dur:2.8*f+.2});
+  const order=[]; for(let k=0;k<100;k++) order.push(k);
+  order.forEach((k,i)=>{ fin.sched.push({at:(.7+i/100*4.2)*f,fn:()=>{ doFlash(k,1); if(i%7===0) burst(k,RM?2:7); }}); });
+  for(let j=0;j<N_SEC;j++) fin.sched.push({at:5.2*f,fn:()=>{ visTarget[100+j]=1; doFlash(100+j,1); }});
+  const t0=hg.attributes.aT0.array; for(let e=0;e<N_OUT;e++) t0[e*2]=t0[e*2+1]=uTime.value+(3.4+e/N_OUT*3.2)*f; hg.attributes.aT0.needsUpdate=true; heartShown=true;
+  S.finale=true; save(); sfxFinale(); buzz([40,120,60,500,40,120,60,500,40,120,60]); shower(3);
+  toast(DATA.milestones[100]);
+}
+function skipFinale(){
+  if(!fin) return; fin.sched.forEach(s=>{ if(!s.done){ s.done=true; try{s.fn();}catch(e){} } });
+  setHeartInstant(true); tweenTo({q:FRONT_Q,dist:fit*1.12,shift:0,dur:.6}); showFinal();
+}
+on(ui.skip,'click',skipFinale);
+function showFinal(){
+  if(!fin) fin={t:0,f:1,sched:[],waveStart:0,cardAt:0,card:false};
+  fin.card=true; state='final'; setUI('final');
+  const box=$('#finText'); box.textContent=''; let delay=RM?0:.3;
+  DATA.finale.paragraphs.forEach((t,i)=>{ const p=document.createElement('p'); if(i===0) p.className='big'; p.textContent=t; p.style.animationDelay=delay+'s'; delay+=RM?0:(i===0?1.8:2.6); box.appendChild(p); });
+  const sg=$('#finSign'); sg.textContent=DATA.finale.signature; sg.style.animation='none'; void sg.offsetWidth; sg.style.animation=''; sg.style.animationDelay=delay+'s'; delay+=RM?0:2;
+  const fa=$('#finActions'); fa.style.animation='none'; void fa.offsetWidth; fa.style.animation=''; fa.style.animationDelay=delay+'s';
+  $('#final').scrollTop=0;
+}
+function leaveFinal(quiet){
+  fin=null; state='explore'; setUI('explore'); hMatOn();
+  if(!quiet) tweenTo({q:FRONT_Q,dist:fit*1.05,shift:0,dur:1.6});
+}
+function hMatOn(){ if(!heartShown) setHeartInstant(true); }
+on($('#fView'),'click',()=>leaveFinal(false));
+
+/* ---------- PNG ---------- */
+let imgUrl=null;
+function closeImg(){ $('#mImg').hidden=true; if(imgUrl&&imgUrl.indexOf('blob:')===0){ try{URL.revokeObjectURL(imgUrl);}catch(e){} } imgUrl=null; }
+on($('#miClose'),'click',closeImg);
+function makePNG(){
+  const CW=1080, CH=1350, c=document.createElement('canvas'); c.width=CW*2; c.height=CH*2; const g=c.getContext('2d'); g.scale(2,2);
+  const bg=g.createRadialGradient(CW/2,CH*.46,40,CW/2,CH*.46,CH*.85); bg.addColorStop(0,'#3d0c20'); bg.addColorStop(.42,'#1d0612'); bg.addColorStop(1,'#07010a'); g.fillStyle=bg; g.fillRect(0,0,CW,CH);
+  const rr=rng(77); for(let i=0;i<260;i++){ const x=rr()*CW,y=rr()*CH,r=.4+rr()*1.4; g.globalAlpha=.15+rr()*.5; g.fillStyle=rr()<.5?'#f3d9a8':'#d86a78'; g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill(); } g.globalAlpha=1;
+  const sc=(CW*.37)/halfW, cx=CW/2, cy=CH*.47;
+  const prj=k=>{ const z=P[k*3+2], s=1+z*.012; return [cx+P[k*3]*sc*s, cy-P[k*3+1]*sc*s]; };
+  g.lineWidth=2; g.strokeStyle='rgba(255,170,150,.75)'; g.shadowColor='rgba(255,120,110,.9)'; g.shadowBlur=14; g.beginPath();
+  for(let i=0;i<=N_OUT;i++){ const q=prj(i%N_OUT); if(i===0) g.moveTo(q[0],q[1]); else g.lineTo(q[0],q[1]); } g.stroke(); g.shadowBlur=0;
+  g.lineWidth=1; g.strokeStyle='rgba(232,194,122,.22)';
+  edgeKeys.forEach(key=>{ const ab=key.split('-'), a=prj(+ab[0]), b=prj(+ab[1]); g.beginPath(); g.moveTo(a[0],a[1]); g.lineTo(b[0],b[1]); g.stroke(); });
+  for(let k=0;k<100;k++){ const q=prj(k), r=(aSizeA[k]*46)*(1+P[k*3+2]*.02), col=aColA.slice(k*3,k*3+3).map(v=>Math.round(v*255));
+    const gr=g.createRadialGradient(q[0],q[1],0,q[0],q[1],r); gr.addColorStop(0,'rgba(255,240,215,1)'); gr.addColorStop(.18,`rgba(${col[0]},${col[1]},${col[2]},.9)`); gr.addColorStop(1,`rgba(${col[0]},${col[1]},${col[2]},0)`);
+    g.fillStyle=gr; g.beginPath(); g.arc(q[0],q[1],r,0,Math.PI*2); g.fill(); }
+  g.textAlign='center'; g.fillStyle='#fbead3'; g.shadowColor='rgba(194,38,63,.6)'; g.shadowBlur=24;
+  g.font='500 76px "Cormorant Garamond",Georgia,serif'; g.fillText('100 причин',CW/2,170); g.font='italic 400 46px "Cormorant Garamond",Georgia,serif'; g.fillStyle='#d8c0ae'; g.fillText('почему именно ты',CW/2,236);
+  g.shadowBlur=10; g.fillStyle='#e8c27a'; g.font='500 26px "Inter",sans-serif'; g.fillText('ДЛЯ КАРИНЫ',CW/2,96);
+  g.shadowBlur=18; g.shadowColor='rgba(232,194,122,.5)'; g.fillStyle='#e8c27a'; g.font='italic 500 58px "Cormorant Garamond",Georgia,serif'; g.fillText(DATA.finale.signature,CW/2,CH-110);
+  return c;
+}
+on($('#fSave'),'click',async()=>{
+  try{ if(document.fonts&&document.fonts.ready) await document.fonts.ready; }catch(e){}
+  let c; try{ c=makePNG(); }catch(e){ toast('Не удалось создать картинку.'); return; }
+  const show=url=>{ imgUrl=url; $('#miImg').src=url; const a=$('#miDl'); a.href=url; $('#mImg').hidden=false; };
+  if(c.toBlob) c.toBlob(b=>{ if(b) show(URL.createObjectURL(b)); else { try{ show(c.toDataURL('image/png')); }catch(e){ toast('Не удалось создать картинку.'); } } },'image/png');
+  else { try{ show(c.toDataURL('image/png')); }catch(e){ toast('Не удалось создать картинку.'); } }
+});
+
+/* ---------- цикл ---------- */
+let raf=0, lastT=0, ftAvg=.016, adaptHold=3, time=0;
+function update(dt){
+  if(tw){
+    tw.t+=dt; const k=easeIO(Math.min(1,tw.t/tw.dur));
+    if(tw.q1) userQ.copy(tw.q0).slerp(tw.q1,k);
+    if(tw.d1!=null) dist=lerp(tw.d0,tw.d1,k);
+    if(tw.s1!=null) shift=lerp(tw.s0,tw.s1,k);
+    if(tw.t>=tw.dur){ const d=tw.done; tw=null; if(d) d(); }
+  } else if(state==='explore' && !(gst && ptrs.size)){
+    if(!RM && (Math.abs(vYaw)>.02||Math.abs(vPitch)>.02)){ rotateBy(vYaw*dt,vPitch*dt); const kk=Math.exp(-dt*2.6); vYaw*=kk; vPitch*=kk; } else { vYaw=vPitch=0; }
+  } else if(state==='intro' && !RM){ qa.setFromAxisAngle(AY,dt*.11); userQ.premultiply(qa).normalize(); }
+  // секретные звёзды
+  let vdirty=false;
+  for(let j=0;j<N_SEC;j++){ const k=100+j; if(Math.abs(aVisA[k]-visTarget[k])>.002){ aVisA[k]+=(visTarget[k]-aVisA[k])*Math.min(1,dt*(RM?12:2.2)); vdirty=true; } else if(aVisA[k]!==visTarget[k]){ aVisA[k]=visTarget[k]; vdirty=true; } }
+  if(vdirty) starGeo.attributes.aVis.needsUpdate=true;
+  // вспышки
+  let fdirty=false;
+  for(let k=0;k<N;k++){ if(flash[k]>0){ flash[k]*=Math.exp(-dt*(RM?4:2.3)); if(flash[k]<.003) flash[k]=0; fdirty=true; } if(aFlA[k]!==flash[k]){ aFlA[k]=flash[k]; fdirty=true; } }
+  if(fdirty) starGeo.attributes.aFlash.needsUpdate=true;
+  // частицы
+  let pa=false;
+  for(let j=0;j<PN;j++){ if(pDur[j]>0){ pAge[j]+=dt; if(pAge[j]>=pDur[j]){ pDur[j]=0; pLife[j]=0; } else { const m=Math.pow(.97,dt*60); pVel[j*3]*=m;pVel[j*3+1]*=m;pVel[j*3+2]*=m; pPos[j*3]+=pVel[j*3]*dt;pPos[j*3+1]+=pVel[j*3+1]*dt;pPos[j*3+2]+=pVel[j*3+2]*dt; const l=1-pAge[j]/pDur[j]; pLife[j]=l*l; } pa=true; } }
+  if(pa){ pg.attributes.position.needsUpdate=true; pg.attributes.aLife.needsUpdate=true; }
+  // финал
+  if(fin){
+    fin.t+=dt; for(const s of fin.sched){ if(!s.done && fin.t>=s.at){ s.done=true; s.fn(); } }
+    if(!fin.card){ hMat.uniforms.uWaveAmp.value=clamp((fin.t-fin.waveStart)*.8,0,.5); if(fin.t>=fin.cardAt) showFinal(); }
+    else hMat.uniforms.uWaveAmp.value=.5;
+  } else hMat.uniforms.uWaveAmp.value=lerp(hMat.uniforms.uWaveAmp.value,heartShown?.4:0,Math.min(1,dt*2));
+  hMat.uniforms.uWave.value=(time*.13)%1;
+  stepTheme(dt); heartMat.uniforms.uK.value=lerp(heartMat.uniforms.uK.value,(heartShown||fin)?.36:.07+.17*openedSet.size/100,Math.min(1,dt*1.6));
+  // камера
+  dist=clamp(dist,state==='panel'?3.2:minD(),maxD()+ (state==='intro'?fit:0)+ (state==='panel'?20:0));
+  camera.position.set(0,0,dist); camera.lookAt(0,0,0); camera.updateMatrixWorld();
+  if(Math.abs(shift)>.5){ camera.setViewOffset(W,H,0,shift,W,H); hasOff=true; } else if(hasOff){ camera.clearViewOffset(); hasOff=false; }
+  const amp=RM?0:(state==='panel'?.6:1);
+  swayQ.setFromEuler(eul.set(Math.sin(time*.31)*.035*amp,Math.sin(time*.23)*.06*amp,0));
+  world.quaternion.copy(userQ).multiply(swayQ); world.updateMatrixWorld(true);
+  dustGroup.quaternion.identity().slerp(world.quaternion,.18);
+  nebs.forEach((s,i)=>{ s.material.rotation+=dt*.01*(i%2?1:-1); });
+}
+function frame(now){
+  raf=requestAnimationFrame(frame);
+  if(!lastT){ lastT=now; return; }
+  const raw=now-lastT; if(raw<14) return; lastT=now;
+  const dt=Math.min(.05,raw/1000); time+=dt; uTime.value=time;
+  ftAvg=ftAvg*.94+Math.min(.1,raw/1000)*.06; adaptHold-=dt;
+  if(adaptHold<=0 && ftAvg>.027 && PRcur>1){ PRcur=Math.max(1,PRcur-.25); adaptHold=3; ftAvg=.017; resize(); }
+  update(dt);
+  fxRender(); draw2d(dt); hudTick();
+}
+on(document,'visibilitychange',()=>{ lastT=0; });
+
+/* ---------- потеря контекста / очистка ---------- */
+on(canvas,'webglcontextlost',e=>{ e.preventDefault(); cancelAnimationFrame(raf); fatal('Система приостановила графику. Прогресс сохранён — нажми кнопку, чтобы продолжить.'); });
+function destroy(){
+  cancelAnimationFrame(raf); off.forEach(f=>{ try{f();}catch(e){} });
+  disposables.forEach(d=>{ try{d.dispose();}catch(e){} }); try{ renderer.dispose(); }catch(e){}
+  try{ if(actx) actx.close(); }catch(e){}
+}
+on(window,'pagehide',destroy);
+
+/* ---------- восстановление прогресса и запуск ---------- */
+applyStarStates(true);
+for(let j=0;j<N_SEC;j++) aVisA[100+j]=visTarget[100+j];
+starGeo.attributes.aVis.needsUpdate=true;
+// линии по уже открытым звёздам (по порядку номеров причин)
+{ const seen=[]; S.opened.slice().sort((a,b)=>a-b).forEach(r=>{ const k=starOfReason[r]; const cand=seen.map(o=>[Math.hypot(P[o*3]-P[k*3],P[o*3+1]-P[k*3+1],P[o*3+2]-P[k*3+2]),o]).sort((a,b)=>a[0]-b[0]);
+  if(cand[0]) addEdge(k,cand[0][1],-10); if(cand[1]&&cand[1][0]<3.4) addEdge(k,cand[1][1],-10); seen.push(k); }); }
+if(S.finale && openedSet.size===100) setHeartInstant(true);
+applyTheme(S.theme,true); updateProgress(); setUI('intro');
+window.addEventListener('load',()=>{},{once:true});
+raf=requestAnimationFrame(frame);
+setTimeout(()=>{ $('#loader').classList.add('gone'); },350);
+}
+})();
+</script>
+</body>
+</html>
